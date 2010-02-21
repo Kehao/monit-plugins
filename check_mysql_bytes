@@ -1,0 +1,53 @@
+#!/usr/bin/env python
+"""
+Check mysql threads by "show status like 'Bytes_%'"
+"""
+
+import sys, getopt, pymysql
+
+def main():
+  try:
+    opts, args = getopt.getopt(sys.argv[1:], "h", 
+        ["help", "host=", "port=", "username=", "password=", "database="])
+  except getopt.GetoptError, err:
+    # print help information and exit:
+    print "UNKNOWN -", str(err) 
+    sys.exit(2)
+  my_args = {'host': 'localhost', 'port': '3306', 'username': 'root', 'password': None}
+  for o, a in opts:
+    if o in ("-h", "--help"):
+      usage(),
+      sys.exit(0)
+    elif "--" in o:
+      my_args[o.strip("--")] = a
+    else:
+      print "UNKNOWN - error argument:", o
+      sys.exit(2)
+  if not ('host' in my_args and 'username' in my_args and 'database' in my_args):
+    print "UNKNOWN - invalid arguments"
+    usage()
+    sys.exit(2)
+  try:
+    conn = pymysql.connect(host=my_args['host'], 
+      port=int(my_args['port']), 
+      user=my_args['username'], 
+      passwd=my_args['password'], 
+      db=my_args['database'])
+    cursor = conn.cursor()
+    cursor.execute("show status like 'Bytes_%'")
+    result = cursor.fetchall()
+    datalist = [(name.split('_')[1], val) for (name, val) in list(result) if val is not None]
+    summary = metrics = ",".join([name + "=" + str(val) for (name, val) in datalist])
+    print "OK -", summary, "|", metrics 
+    cursor.close()
+    conn.close()
+  except:
+    print "CRITICAL - mysql access failure:", sys.exc_info()[0]
+    sys.exit(2)
+
+def usage():
+  print "Usage: check_mysql_threads --host=host --port=port --username=user --password=password --database=db"
+
+if __name__ == "__main__":
+  main()
+

@@ -1,0 +1,60 @@
+#!/usr/bin/env python
+
+"""
+check_load by cat /proc/loadavg
+"""
+import os, re, sys, getopt
+
+def run(Args):
+    if 'darwin' in sys.platform:
+      #mac os x
+      pipe = os.popen('top -l 1')
+    else:
+      #linux
+      pipe = os.popen("cat /proc/loadavg")
+    output = pipe.read()
+    pipe.close
+    if output.strip() == "":
+      print "UNKNOWN - unsupported command" 
+      return
+    data = {}
+    if 'darwin' in sys.platform:
+      #mac os x
+      match = re.search(r'Load Avg:\s+([0-9]+.[0-9]+),\s+([0-9]+.[0-9]+),\s+([0-9]+.[0-9]+)', output)
+      data['load1'] = match.group(1) + '%'
+      data['load5'] = match.group(2) + '%'
+      data['load15'] = match.group(3) + '%'
+    else:
+      #linux
+      tokens = output.split(" ")
+      data['load1'] = tokens[0] + '%'
+      data['load5'] = tokens[1] + '%'
+      data['load15'] = tokens[2] + '%'
+    summary = 'load average: ' + ", ".join(data.values())
+    metrics = ','.join([name + "=" + val for name, val in data.iteritems()])
+    print "OK -", summary, "|", metrics
+
+def usage():
+    print "Usage: check_load -h"
+
+if __name__ == "__main__":
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], "h", ["help"])
+    except getopt.GetoptError, err:
+    # print help information and exit:
+        print "UNKNOWN -", str(err)
+        sys.exit(2)
+    for o, a in opts:
+        if o in ("-h", "--help"):
+            usage(),
+            sys.exit(0)
+        else:
+            print "UNKNOWN - error argument:" + o
+            usage()
+            sys.exit(2)
+    try:
+        run({})
+    except:
+        print "UNKNOWN -", sys.exc_info()[0]
+        sys.exit(2)
+

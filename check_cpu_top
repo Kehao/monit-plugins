@@ -1,0 +1,75 @@
+#!/usr/bin/env python
+
+"""
+check_cpu_top by 'top -b -n 1'
+"""
+import os, re, sys, getopt
+
+def run(args):
+    if 'darwin' in sys.platform:
+      #mac os x
+      pipe = os.popen('top -l 1')
+    else:
+      #linux
+      pipe = os.popen('top -b -n 1')
+    output = pipe.read()
+    pipe.close
+    lines = output.split("\n")
+    if len(lines) < 3:
+      print "UNKNOWN - unknown command output"
+      return
+    cpuinfo = lines[2]
+    if 'darwin' in sys.platform:
+      #mac os x
+      match = re.search(r'(CPU usage:.+)', cpuinfo, re.DOTALL)
+      cpuinfo = match.group(1)
+      match = re.search(r'CPU usage:\s+([0-9]+.[0-9]+%)\s+user,\s+([0-9]+.[0-9]+%)\s+sys,\s+([0-9]+.[0-9]+%)\s+idle', cpuinfo)
+    else:
+      #linux
+      match = re.search(r'Cpu(s):\s+([0-9]+.[0-9]+%)us,\s+([0-9]+.[0-9]+%)sy,\s+([0-9]+.[0-9]+%)ni,\s+([0-9]+.[0-9]+%)id,\s+([0-9]+.[0-9]+%)wa', cpuinfo)
+    
+    if match == None:
+      print "UNKNOWN -", cpuinfo
+    else:
+      data = {}
+      if 'darwin' in sys.platform:
+        #mac os x
+        data['user'] = match.group(1)
+        data['system'] = match.group(2)
+        data['idle'] = match.group(3)
+        data['iowait'] = '0.0%'
+        data['nice'] = '0.0%'
+      else:
+        #linux
+        data['user'] = match.group(1)
+        data['system'] = match.group(2)
+        data['nice'] = match.group(3)
+        data['idle'] = match.group(4)
+        data['iowait'] = match.group(5)
+      metrics = ",".join([name + "=" + val for name, val in data.iteritems()])
+      print "OK -", cpuinfo, "|", metrics
+
+def usage():
+    print "Usage: check_cpu_top -h"
+
+if __name__ == "__main__":
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], "h", ["help"])
+    except getopt.GetoptError, err:
+        print "UNKNOWN -", str(err)
+        usage()
+        sys.exit(2)
+    for o, a in opts:
+      if o in ("-h", "--help"):
+        usage(),
+        sys.exit(0)
+      else:
+        print "UNKNOWN - error argument:" + o
+        usage()
+        sys.exit(2)
+    try:
+      run({})
+    except:
+      print "UNKNOWN -", sys.exc_info()[0]
+      sys.exit(2)
+
