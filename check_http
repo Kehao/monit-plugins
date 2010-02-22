@@ -30,7 +30,7 @@ def run(args):
         length = len(data)
       elapsed_time = time.time() - start
       summary = "%s %s, %s bytes in %.3f seconds" % (status, reason, length, elapsed_time)
-      metrics = "time=%.3f,length=%s" % (elapsed_time, length)
+      metrics = "time=%.3fms,length=%s" % (1000*elapsed_time, length)
       if status >= 500:
         print "CRITICAL -", summary, "|", metrics
       elif status >= 400:

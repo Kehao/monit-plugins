@@ -18,7 +18,7 @@ def run(args):
       s.connect((host, int(port)))
       escape_time = time.time() - start
       summary = "%.3f seconds response time on port %s" % (escape_time, port)
-      metrics = "time=%.3f" % escape_time
+      metrics = "time=%.3fms" % (escape_time*1000)
       print "OK -", summary, "|", metrics
     except socket.error, msg:
       print "CRITICAL -", msg
