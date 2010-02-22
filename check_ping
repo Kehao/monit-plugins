@@ -6,7 +6,7 @@ check_ping
 import os, re, sys, getopt
 
 def run(args):
-    cmd = " ".join(["ping -i 0.25", 
+    cmd = " ".join(["ping", #-i 0.25
         "-c", args['packets'], 
         "-t", args['timeout'], 
         args['host']])
