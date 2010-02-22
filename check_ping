@@ -6,9 +6,12 @@ check_ping
 import os, re, sys, getopt
 
 def run(args):
+    timeout_opt = "-W 2"
+    if 'darwin' in sys.platform:
+      timeout_opt = "-t " + args['timeout']
     cmd = " ".join(["ping", #-i 0.25
         "-c", args['packets'], 
-        "-t", args['timeout'], 
+        timeout_opt,
         args['host']])
     pipe = os.popen(cmd)
     output = pipe.read()
