@@ -57,14 +57,13 @@ def get_data(url):
       data.append(("total_bytes", str(totalB)))
     elif "CPULoad:" in line:
       cpuload = line.strip(" CPULoad:")
-      summary += ("CPULoad = " + cpuload + "%")
       data.append(("cpuload", cpuload))
     elif "Uptime:" in line:
       uptime = line.strip(" Uptime:")
       data.append(("uptime", uptime))
     elif "ReqPerSec:" in line:
       reqpersec = line.strip(" ReqPerSec:")
-      summary += ", Request Per Second = " + reqpersec
+      summary += "Request Per Second = " + reqpersec
       data.append(("req_per_sec", reqpersec))
     elif "BytesPerSec:" in line:
       bytespersec = line.strip(" BytesPerSec:")

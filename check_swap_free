@@ -9,8 +9,8 @@ def run(Args):
     pipe = os.popen("free -o")
     output = pipe.read()
     pipe.close
-    match = re.search(r'Swap:\s*(\d+)\s+(\d+)\s+(\d+)', data)
-    if not match or not match2 or not match3:
+    match = re.search(r'Swap:\s*(\d+)\s+(\d+)\s+(\d+)', output) 
+    if match == None:
         print "UNKNOWN - cannot parse", output
         return
     total = int(match.group(1)) * 1024
@@ -19,7 +19,7 @@ def run(Args):
     usage = int(used / total)
     data = {'total': total, 'used': used, 'free': free, 'usage': str(usage) + '%'}
     summary = "swap usage = " + str(usage) + "%"
-    metrics = ", ".join([name + "=" + val for name, val in metrics.iteritems()])
+    metrics = ", ".join([name + "=" + str(val) for name, val in data.iteritems()])
     print "OK -", summary, "|", metrics
 
 def usage():

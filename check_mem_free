@@ -11,15 +11,16 @@ def run(Args):
     pipe.close
     if output.strip() == "":
       print "UNKNOWN - unsupported command" 
+      return
     lines = output.split("\n")
-    headers = lines[0].split(" ")
-    meminfo = lines[1].strip("Mem: ").split(" ")
+    headers = re.split(r"\s+", lines[0].strip(" "))
+    meminfo = re.split(r"\s+", lines[1].strip("Mem: "))
     mem = {}
     for i in range(6):
-        mem[headers[i]] = str(int(meminfo[i]) * 1024)
+        mem[headers[i]] = int(meminfo[i]) * 1024
     mem['usage'] = str(mem['used'] / mem['total']) + '%'
     summary = "memory usage = " + mem['usage']
-    metrics = ", ".join([name + "=" + val for name, val in mem.iteritems()])
+    metrics = ", ".join([name + "=" + str(val) for name, val in mem.iteritems()])
     print "OK -", summary, "|", metrics
 
 def usage():
