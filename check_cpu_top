@@ -18,34 +18,30 @@ def run(args):
     if len(lines) < 3:
       print "UNKNOWN - unknown command output"
       return
+    data = {}
     cpuinfo = lines[2]
     if 'darwin' in sys.platform:
       #mac os x
       match = re.search(r'(CPU usage:.+)', cpuinfo, re.DOTALL)
       cpuinfo = match.group(1)
       match = re.search(r'CPU usage:\s+([0-9]+.[0-9]+%)\s+user,\s+([0-9]+.[0-9]+%)\s+sys,\s+([0-9]+.[0-9]+%)\s+idle', cpuinfo)
+      data['user'] = match.group(1)
+      data['system'] = match.group(2)
+      data['idle'] = match.group(3)
+      data['iowait'] = '0.0%'
+      data['nice'] = '0.0%'
     else:
       #linux
-      match = re.search(r'Cpu(s):\s+([0-9]+.[0-9]+%)us,\s+([0-9]+.[0-9]+%)sy,\s+([0-9]+.[0-9]+%)ni,\s+([0-9]+.[0-9]+%)id,\s+([0-9]+.[0-9]+%)wa', cpuinfo)
-    
-    if match == None:
-      print "UNKNOWN -", cpuinfo
-    else:
-      data = {}
-      if 'darwin' in sys.platform:
-        #mac os x
-        data['user'] = match.group(1)
-        data['system'] = match.group(2)
-        data['idle'] = match.group(3)
-        data['iowait'] = '0.0%'
-        data['nice'] = '0.0%'
-      else:
-        #linux
-        data['user'] = match.group(1)
-        data['system'] = match.group(2)
-        data['nice'] = match.group(3)
-        data['idle'] = match.group(4)
-        data['iowait'] = match.group(5)
+      match1 = re.search(r'\s+([0-9]+.[0-9]+%)us', cpuinfo)
+      match2 = re.search(r'\s+([0-9]+.[0-9]+%)sy', cpuinfo)
+      match3 = re.search(r'\s+([0-9]+.[0-9]+%)ni', cpuinfo)
+      match4 = re.search(r'\s+([0-9]+.[0-9]+%)id', cpuinfo)
+      match5 = re.search(r'\s+([0-9]+.[0-9]+%)wa', cpuinfo)
+      data['user'] = match1.group(1)
+      data['system'] = match2.group(1)
+      data['nice'] = match3.group(1)
+      data['idle'] = match4.group(1)
+      data['iowait'] = match5.group(1)
       metrics = ",".join([name + "=" + val for name, val in data.iteritems()])
       print "OK -", cpuinfo, "|", metrics
 
