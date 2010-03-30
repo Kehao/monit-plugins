@@ -5,15 +5,6 @@ check_ping
 """
 import os, re, sys, getopt
 
-def disco(args):
-  pipe = os.popen("df " + args['path'])
-  output = pipe.read()
-  pipe.close
-  lines = output.split("\n")
-
-
-
-
 def run(args):
     pipe = os.popen("df " + args['path'])
     output = pipe.read()
@@ -35,39 +26,33 @@ def run(args):
     print "OK -", summary, "|", metrics
 
 def usage():
-    print "usage:  check_disk_df -h --path=path", "\n\tcheck_disk_df --disco"
+    print "usage:  check_disk_df -h --path=path" 
 
 if __name__ == "__main__":
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "h", ["help", "path=", "disco"])
+        opts, args = getopt.getopt(sys.argv[1:], "h", ["help", "path="])
     except getopt.GetoptError, err:
     # print help information and exit:
         print "UNKNOWN -", str(err)
         sys.exit(2)
     cmd_args = {}
-    is_disco = False
     for o, a in opts:
       if o in ("-h", "--help"):
         usage(),
         sys.exit(0)
-      elif o in ("--disco"):
-        is_disco = True
       elif o in ("--path"):
         cmd_args['path'] = a
       else:
         print "UNKNOWN - error argument:" + o
         usage()
         sys.exit(2)
-    if is_disco:
-        disco(cmd_args)
-    else:
-      if not ('path' in cmd_args):
-        print "UNKNOWN - invalid arguments"
-        usage()
-        sys.exit(2)
-      try:
-        run(cmd_args)
-      except:
-        print "UNKNOWN -", sys.exc_info()[0]
-        sys.exit(2)
+    if not ('path' in cmd_args):
+      print "UNKNOWN - invalid arguments"
+      usage()
+      sys.exit(2)
+    try:
+      run(cmd_args)
+    except:
+      print "UNKNOWN -", sys.exc_info()[0]
+      sys.exit(2)
 
