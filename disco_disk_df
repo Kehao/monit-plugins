@@ -22,7 +22,7 @@ def run(args):
       mount = match.group(5)
       if not ((total == 0) or (used == 0) or (avail == 0)):
         disks.append((mount, usage, total, used, avail))
-  summary = "disks are discovered successfully"
+  summary = "disks discovered"
   services = " | ".join([new(disk) for disk in disks])
   print "OK -", summary, "|", services
 
