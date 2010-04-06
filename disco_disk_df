@@ -23,7 +23,8 @@ def run(args):
       if not ((total == 0) or (used == 0) or (avail == 0)):
         disks.append((mount, usage, total, used, avail))
   summary = "disks discovered"
-  services = " | ".join([new(disk) for disk in disks])
+  services = " | ".join(["name=Disk-%s,command=check_disk_df,params=path=%s" % (mount, mount) 
+    for (mount, usage, total, used, avail) in disks])
   print "OK -", summary, "|", services
 
 def new(disk):
