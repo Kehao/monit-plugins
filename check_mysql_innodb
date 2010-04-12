@@ -3,7 +3,7 @@
 Check mysql threads by "show status like 'Innodb_%'"
 """
 
-import sys, getopt, pymysql
+import sys, getopt, MySQLdb
 
 def main():
   try:
@@ -29,7 +29,7 @@ def main():
     sys.exit(2)
   try:
     print my_args
-    conn = pymysql.connect(host=my_args['host'], 
+    conn = MySQLdb.connect(host=my_args['host'], 
       port=int(my_args['port']), 
       user=my_args['username'], 
       passwd=my_args['password'], 
