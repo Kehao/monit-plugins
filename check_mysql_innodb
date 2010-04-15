@@ -28,15 +28,12 @@ def main():
     usage()
     sys.exit(2)
   try:
-    print my_args
     conn = MySQLdb.connect(host=my_args['host'], 
       port=int(my_args['port']), 
       user=my_args['username'], 
       passwd=my_args['password'], 
       db=my_args['database'])
-    print conn
     cursor = conn.cursor()
-    print cursor
     cursor.execute("show status like 'Innodb_%'")
     result = cursor.fetchall()
     datalist = [(name[(name.find("_")+1):], val) for (name, val) in list(result) if val is not None]
