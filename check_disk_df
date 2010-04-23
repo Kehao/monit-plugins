@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-check_ping 
+check_disk_df: how to calc?
 """
 import os, re, sys, getopt
 
@@ -21,7 +21,17 @@ def run(args):
     data['avail'] = tokens[3]
     data['usage'] = tokens[4]
     mount = tokens[5]
-    summary = "Disk '" + mount + "' usage = " + data['usage']
+
+    units = 1024
+    if 'darwin' in sys.platform:
+      #mac os x
+      units = 512
+    
+    data['total'] = str(units * int(data['total']))
+    data['used'] = str(units * int(data['used']))
+    data['avail'] = str(units * int(data['avail']))
+
+    summary = "Usage of " + mount + " : " + data['usage']
     metrics = ",".join([name + "=" + val for name, val in data.iteritems()])
     print "OK -", summary, "|", metrics
 

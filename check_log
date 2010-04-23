@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-check_file
+check_log
 """
 import os, re, sys, getopt
 
