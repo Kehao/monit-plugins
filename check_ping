@@ -28,7 +28,7 @@ def run(args):
       data['rtmin'] = match2.group(1) + 'ms'
       data['rta'] = match2.group(2) + 'ms'
       data['rtmax'] = match2.group(3) + 'ms'
-      summary = 'Packet loss = ' + pl + ", RTA = " + data['rta']
+      summary = 'Packet loss: ' + pl + ", RTA: " + data['rta']
       metrics = ",".join([name + "=" + val for name, val in data.iteritems()])
       if pl == '0%':
         print "OK -", summary, "|", metrics
