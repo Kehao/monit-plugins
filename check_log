@@ -19,8 +19,8 @@ def run(args):
   threshold = []
   if ("critical" in args) and (args['critical'] != ""):
     threshold = ['CRITICAL', args['critical']]
-  elif ("warn" in args) and (args['warn'] != ""):
-    threshod = ['WARNING', args['warn']]
+  elif ("warning" in args) and (args['warning'] != ""):
+    threshod = ['WARNING', args['warning']]
   else:
     pass
   if len(threshold) > 0:
@@ -35,11 +35,11 @@ def run(args):
   print 'OK - file size:', data['size'], 'Bytes |', metrics 
 
 def usage():
-    print "Usage: check_log -h --file=file --warn=warn --critical=critical"
+    print "Usage: check_log -h --file=file --warning=warning --critical=critical"
 
 if __name__ == "__main__":
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "h", ["help", "file=", "warn=", "critical="])
+        opts, args = getopt.getopt(sys.argv[1:], "h", ["help", "file=", "warning=", "critical="])
     except getopt.GetoptError, err:
     # print help information and exit:
         print "UNKNOWN -", str(err)
@@ -51,8 +51,8 @@ if __name__ == "__main__":
         sys.exit(0)
       elif o in ("--file"):
         cmd_args['file'] = a
-      elif o in ("--warn"):
-        cmd_args['warn'] = a
+      elif o in ("--warning"):
+        cmd_args['warning'] = a
       elif o in ("--critical"):
         cmd_args['critical'] = a
       else:
