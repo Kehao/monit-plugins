@@ -42,8 +42,9 @@ def run(args):
       data['nice'] = match3.group(1)
       data['idle'] = match4.group(1)
       data['iowait'] = match5.group(1)
-      metrics = ",".join([name + "=" + val for name, val in data.iteritems()])
-      print "OK -", cpuinfo, "|", metrics
+    data['usage'] = str(100.00 - float(data['idle'].strip("%"))) + '%'
+    metrics = ",".join([name + "=" + val for name, val in data.iteritems()])
+    print "OK -", cpuinfo, "|", metrics
 
 def usage():
     print "Usage: check_cpu_top -h"
