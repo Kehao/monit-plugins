@@ -19,7 +19,8 @@ def run(Args):
     for i in range(6):
         mem[headers[i]] = int(meminfo[i]) * 1024
     mem['usage'] = str(mem['used'] / mem['total']) + '%'
-    summary = "memory usage = " + mem['usage']
+    mem['appused'] = str(mem['used'] - mem['buffers'] - mem['cached'])
+    summary = "Memory: usage = " + mem['usage']
     metrics = ", ".join([name + "=" + str(val) for name, val in mem.iteritems()])
     print "OK -", summary, "|", metrics
 
