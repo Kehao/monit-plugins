@@ -21,7 +21,7 @@ def run(args):
     #pl: packet loss
     pl = match1.group(1) 
     if pl == '100%': 
-      summary = 'Packet loss = ' + pl
+      summary = 'Packet loss : ' + pl
       print "CRITICAL -", summary
     else:
       data = {'pl': pl}
