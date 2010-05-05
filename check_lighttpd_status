@@ -34,10 +34,15 @@ def main():
       print "UNKNOWN - could not parse arguments" 
       usage()
       sys.exit(2)
-  data = get_data(url)
-  summary = data[0]
-  metrics = data[1]
-  print "OK -", summary, "|", ",".join([name + "=" + val for (name, val) in metrics])
+  try:
+    data = get_data(url)
+    summary = data[0]
+    metrics = data[1]
+    print "OK -", summary, "|", ",".join([name + "=" + val for (name, val) in metrics])
+  except:
+    print "UNKNOWN - internal error = ", sys.exc_info()[0]
+    sys.exit(2)
+    
 
 def usage():
   print "Usage: check_lighttpd_status -url=url"

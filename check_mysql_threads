@@ -37,7 +37,7 @@ def main():
     cursor.execute("show status like 'Threads_%'")
     result = cursor.fetchall()
     datalist = [(name.split('_')[1], val) for (name, val) in list(result) if val is not None]
-    summary = metrics = ",".join([name + "=" + str(val) for (name, val) in datalist])
+    summary = metrics = ", ".join([name + " = " + str(val) for (name, val) in datalist])
     print "OK -", summary, "|", metrics 
     cursor.close()
     conn.close()
