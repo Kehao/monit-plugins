@@ -21,7 +21,7 @@ def main():
     elif "--" in o:
       my_args[o.strip("--")] = a
     else:
-      print "UNKNOWN - error argument:", o
+      print "UNKNOWN - error argument = ", o
       sys.exit(2)
   if not ('host' in my_args and 'username' in my_args and 'database' in my_args):
     print "UNKNOWN - invalid arguments"
@@ -37,8 +37,8 @@ def main():
     cursor.execute("show status like 'Innodb_%'")
     result = cursor.fetchall()
     datalist = [(name[(name.find("_")+1):], val) for (name, val) in list(result) if val is not None]
-    summary = metrics = ", ".join([name + " = " + str(val) for (name, val) in datalist])
-    print "OK -", summary, "|", metrics 
+    #summary = metrics = ", ".join([name + " = " + str(val) for (name, val) in datalist])
+    print "OK - Innodb OK |", metrics 
     cursor.close()
     conn.close()
   except:
