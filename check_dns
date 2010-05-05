@@ -26,17 +26,20 @@ def run(args):
       addr = line.strip("Address: ")
       addrs.append(addr)
   is_addr_valid = False
-  for addr in addrs:
-    if addr in expected_addrs:
-      is_addr_valid = True
-      break
+  if len(expected_addrs) == 0:
+    is_addr_valid = True
+  else: 
+    for addr in addrs:
+      if addr in expected_addrs:
+        is_addr_valid = True
+        break
   if is_addr_valid:
     escape_time = time.time() - start
-    summary = "%.3f seconds response time. %s returns %s" % (escape_time, name, ",".join(addrs))
+    summary = "returns = '%s', response time = %.3f(s)" % (",".join(addrs), escape_time)
     metrics = "time=%.3fms" % (escape_time*1000)
     print "OK -", summary, "|", metrics
   else:
-    print "CRITICAL - expected '%s' but got '%s'" % (",".join(expected_addrs), ",".join(addrs))
+    print "CRITICAL - expected = '%s', got = '%s'" % (",".join(expected_addrs), ",".join(addrs))
 
 def usage():
     print "Usage: check_dns -h --name=name --addr=addr1,addr2,..,addrn"

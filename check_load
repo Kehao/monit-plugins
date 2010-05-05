@@ -30,7 +30,7 @@ def run(Args):
       data['load1'] = tokens[0] + '%'
       data['load5'] = tokens[1] + '%'
       data['load15'] = tokens[2] + '%'
-    summary = 'load average: ' + ", ".join(data.values())
+    summary = ', '.join([name + " = " + val for name, val in data.iteritems()])
     metrics = ','.join([name + "=" + val for name, val in data.iteritems()])
     print "OK -", summary, "|", metrics
 

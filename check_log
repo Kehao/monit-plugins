@@ -29,10 +29,10 @@ def run(args):
     pipe.close
     matches = int(output.strip('\n'))
     if matches > 0:
-      summary = "'" + threshold[1] + "' is found " + str(matches) + " times."
+      summary = "found = " + "'" + threshold[1] + "', " + "times = " +  str(matches)
       print threshold[0], '-', summary, '|', metrics
       return
-  print 'OK - file size:', data['size'], 'Bytes |', metrics 
+  print 'OK - file size =', data['size'], 'Bytes |', metrics 
 
 def usage():
     print "Usage: check_log -h --file=file --warning=warning --critical=critical"

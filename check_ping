@@ -21,14 +21,14 @@ def run(args):
     #pl: packet loss
     pl = match1.group(1) 
     if pl == '100%': 
-      summary = 'Packet loss : ' + pl
+      summary = 'packet loss = ' + pl
       print "CRITICAL -", summary
     else:
       data = {'pl': pl}
       data['rtmin'] = match2.group(1) + 'ms'
       data['rta'] = match2.group(2) + 'ms'
       data['rtmax'] = match2.group(3) + 'ms'
-      summary = 'Packet loss: ' + pl + ", RTA: " + data['rta']
+      summary = 'packet loss = ' + pl + ", rta = " + data['rta']
       metrics = ",".join([name + "=" + val for name, val in data.iteritems()])
       if pl == '0%':
         print "OK -", summary, "|", metrics

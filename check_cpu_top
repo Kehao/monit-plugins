@@ -44,7 +44,7 @@ def run(args):
       data['iowait'] = match5.group(1)
     data['usage'] = str(100.00 - float(data['idle'].strip("%"))) + '%'
     metrics = ",".join([name + "=" + val for name, val in data.iteritems()])
-    print "OK -", cpuinfo, "|", metrics
+    print "OK -", "usage =", data['usage'], "|", metrics
 
 def usage():
     print "Usage: check_cpu_top -h"

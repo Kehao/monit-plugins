@@ -63,7 +63,7 @@ def get_data(url):
       data.append(("uptime", uptime))
     elif "ReqPerSec:" in line:
       reqpersec = line.strip(" ReqPerSec:")
-      summary += "Request Per Second = " + reqpersec
+      summary += "request per second = " + reqpersec
       data.append(("req_per_sec", reqpersec))
     elif "BytesPerSec:" in line:
       bytespersec = line.strip(" BytesPerSec:")

@@ -51,12 +51,12 @@ def get_data(url):
     for line in lines:
       if "Total Accesses:" in line:
         totalAcc = line.strip(" Total Accesses:")
-        summary += "Total Accesses = " + totalAcc
+        summary += "total accesses = " + totalAcc
         data.append(("total_accesses", totalAcc))
       elif "Total kBytes:" in line:
         totalKB = line.strip(" Total kBytes:")
         totalB = int(totalKB) * 1024
-        summary += "," + "Total kBytes = " + totalKB 
+        summary += "," + "total kbytes = " + totalKB + "(kB)"
         data.append(("total_bytes", str(totalB)))
       elif "Uptime:" in line:
         uptime = line.strip(" Uptime:")

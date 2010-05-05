@@ -29,7 +29,7 @@ def run(args):
         data = resp.read()
         length = len(data)
       elapsed_time = time.time() - start
-      summary = "%s %s, %s bytes in %.3f seconds" % (status, reason, length, elapsed_time)
+      summary = "status = %s %s, size = %s(byte), response time = %.3f(s)" % (status, reason, length, elapsed_time)
       metrics = "time=%.3fms,length=%s" % (1000*elapsed_time, length)
       if status >= 500:
         print "CRITICAL -", summary, "|", metrics

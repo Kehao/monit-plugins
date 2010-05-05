@@ -31,7 +31,7 @@ def run(args):
     data['used'] = str(units * int(data['used']))
     data['avail'] = str(units * int(data['avail']))
 
-    summary = "Usage of " + mount + " : " + data['usage']
+    summary = "usage = " + data['usage']
     metrics = ",".join([name + "=" + val for name, val in data.iteritems()])
     print "OK -", summary, "|", metrics
 

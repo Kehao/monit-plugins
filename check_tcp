@@ -17,7 +17,7 @@ def run(args):
       s.settimeout(5)
       s.connect((host, int(port)))
       escape_time = time.time() - start
-      summary = "%.3f seconds response time on port %s" % (escape_time, port)
+      summary = "port = %s, response time = %.3f(s)" % (port, escape_time)
       metrics = "time=%.3fms" % (escape_time*1000)
       print "OK -", summary, "|", metrics
     except socket.error, msg:
