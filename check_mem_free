@@ -21,7 +21,7 @@ def run(Args):
     mem['usage'] = str(mem['used'] / mem['total']) + '%'
     mem['appused'] = str(mem['used'] - mem['buffers'] - mem['cached'])
     summary = "memory usage = " + mem['usage']
-    metrics = ",".join([name + " = " + str(val) for name, val in mem.iteritems()])
+    metrics = ",".join([name + "=" + str(val) for name, val in mem.iteritems()])
     print "OK -", summary, "|", metrics
 
 def usage():
