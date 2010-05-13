@@ -5,7 +5,29 @@ Check mysql threads by "show status like 'Innodb_%'"
 
 import sys, getopt, MySQLdb
 
-def main():
+def run(my_args):
+  try:
+    conn = MySQLdb.connect(host=my_args['host'], 
+      port=int(my_args['port']), 
+      user=my_args['username'], 
+      passwd=my_args['password'], 
+      db=my_args['database'])
+    cursor = conn.cursor()
+    cursor.execute("show status like 'Innodb_%'")
+    result = cursor.fetchall()
+  except:
+    print "CRITICAL - mysql access failure"
+    sys.exit(2)
+  datalist = [(name[(name.find("_")+1):], val) for (name, val) in list(result) if val is not None]
+  metrics = ",".join([name + "=" + str(val) for (name, val) in datalist])
+  print "OK - Innodb OK |", metrics 
+  cursor.close()
+  conn.close()
+
+def usage():
+  print "Usage: check_mysql_innodb --host=host --port=port --username=user --password=password --database=db"
+
+if __name__ == "__main__":
   try:
     opts, args = getopt.getopt(sys.argv[1:], "h", 
         ["help", "host=", "port=", "username=", "password=", "database="])
@@ -27,27 +49,5 @@ def main():
     print "UNKNOWN - invalid arguments"
     usage()
     sys.exit(2)
-  try:
-    conn = MySQLdb.connect(host=my_args['host'], 
-      port=int(my_args['port']), 
-      user=my_args['username'], 
-      passwd=my_args['password'], 
-      db=my_args['database'])
-    cursor = conn.cursor()
-    cursor.execute("show status like 'Innodb_%'")
-    result = cursor.fetchall()
-    datalist = [(name[(name.find("_")+1):], val) for (name, val) in list(result) if val is not None]
-    #summary = metrics = ", ".join([name + " = " + str(val) for (name, val) in datalist])
-    print "OK - Innodb OK |", metrics 
-    cursor.close()
-    conn.close()
-  except:
-    print "CRITICAL - mysql access failure"
-    sys.exit(2)
-
-def usage():
-  print "Usage: check_mysql_innodb --host=host --port=port --username=user --password=password --database=db"
-
-if __name__ == "__main__":
-  main()
+  run(my_args)
 
