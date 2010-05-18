@@ -9,7 +9,12 @@ import time
 
 def run(args):
   name = args['name']
-  expected_addrs = args['addrs'].split(',')
+  if 'addrs' not in args:
+    expected_addrs = []
+  elif args['addrs'].strip() == '':
+    expected_addrs = []
+  else:
+    expected_addrs = args['addrs'].split(',')
   start = time.time()
   #TODO: timeout
   pipe = os.popen("nslookup " + name)
@@ -64,7 +69,7 @@ if __name__ == "__main__":
         print "UNKNOWN - error argument:" + o
         usage()
         sys.exit(2)
-    if not ('name' in cmd_args and 'addrs' in cmd_args):
+    if not ('name' in cmd_args):
       print "UNKNOWN - invalid arguments"
       usage()
       sys.exit(2)
