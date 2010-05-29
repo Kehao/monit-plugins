@@ -6,13 +6,13 @@ check_ping
 import os, re, sys, getopt
 
 def run(args):
-    timeout_opt = "-W 2"
     if 'darwin' in sys.platform:
       timeout_opt = "-t " + args['timeout']
-    cmd = " ".join(["ping", #-i 0.25
-        "-c", args['packets'], 
-        timeout_opt,
-        args['host']])
+    elif 'linux' in sys.platform:
+      timeout_opt = "-w " + args['timeout']
+    else:
+      timeout_opt = ""
+    cmd = " ".join(["ping", "-c", args['packets'], timeout_opt, args['host']])
     pipe = os.popen(cmd)
     output = pipe.read()
     pipe.close
@@ -45,7 +45,7 @@ if __name__ == "__main__":
     # print help information and exit:
         print "UNKNOWN -", str(err)
         sys.exit(2)
-    cmd_args = {'packets': '4', 'timeout': '6'} 
+    cmd_args = {'packets': '4', 'timeout': '8'} 
     for o, a in opts:
       if o in ("-h", "--help"):
         usage(),
