@@ -10,6 +10,9 @@ def run(args):
     host = args['host']
     port = args['port']
     url = args['url']
+    if url == '':
+      url = '/'
+
     conn = s = None
     try:
       #check tcp socket first
