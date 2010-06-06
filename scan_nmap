@@ -8,7 +8,7 @@ import os, re, sys, getopt
 
 def run(args):
   host = args['host']
-  pipe = os.popen('nmap -F -sU -sT --host-timeout 30000 ' + host)
+  pipe = os.popen('nmap -F -sU -sT --host-timeout 20000 ' + host)
   output = pipe.read()
   pipe.close
   lines = output.split("\n")
