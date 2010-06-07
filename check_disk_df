@@ -1,68 +1,41 @@
-#!/usr/bin/env python
+#!/usr/bin/env lua
 
-"""
-check_disk_df: how to calc?
-"""
-import os, re, sys, getopt
+-- check_disk_df
 
-def run(args):
-    pipe = os.popen("df " + args['path'])
-    output = pipe.read()
-    pipe.close
-    lines = output.split("\n")
-    #remove head
-    lines.pop(0)
-    diskinfo = " ".join(lines)
-    tokens = re.split(r'\s+', diskinfo)
-    data = {}
-    fs = tokens[0]
-    data['total'] = tokens[1]
-    data['used'] = tokens[2]
-    data['avail'] = tokens[3]
-    data['usage'] = tokens[4]
-    mount = tokens[5]
+dofile("plugin.lua")
 
-    units = 1024
-    if 'darwin' in sys.platform:
-      #mac os x
-      units = 512
-    
-    data['total'] = str(units * int(data['total']))
-    data['used'] = str(units * int(data['used']))
-    data['avail'] = str(units * int(data['avail']))
+function check(opts)
+  output = runcmd("df "..opts["path"])
+  lines = split(output, "[\r\n]+")
+  for i,line in pairs(lines) do
+    pat = "^([^%s]+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%%" 
+    _,_,fs,total,used,avail,usage = string.find(line, pat)
+    if usage then
+      print(string.format("OK - usage = %s%%, total = %.2fG\r\n", usage, total/(1000*1000)))
+      print("metric: usage="..usage.."%")
+      print("metric: total="..total.."KB")
+      print("metric: used="..used.."KB")
+      print("metric: avail="..avail.."KB")
+      return
+    end
+  end
+  print("UNKNOWN - "..lines[1].."\r\n")
+end
 
-    summary = "usage = " + data['usage']
-    metrics = ",".join([name + "=" + val for name, val in data.iteritems()])
-    print "OK -", summary, "|", metrics
+function usage() 
+  print("check_disk_df --path=Path")
+end
 
-def usage():
-    print "usage:  check_disk_df -h --path=path" 
+-- parse arguments
+opts = getopt(arg, {"path"})
+if not opts["path"] then
+  print("UNKNOWN - miss argument = 'path'\r\n")
+  usage()
+  return
+end
 
-if __name__ == "__main__":
-    try:
-        opts, args = getopt.getopt(sys.argv[1:], "h", ["help", "path="])
-    except getopt.GetoptError, err:
-    # print help information and exit:
-        print "UNKNOWN -", str(err)
-        sys.exit(2)
-    cmd_args = {}
-    for o, a in opts:
-      if o in ("-h", "--help"):
-        usage(),
-        sys.exit(0)
-      elif o in ("--path"):
-        cmd_args['path'] = a
-      else:
-        print "UNKNOWN - error argument:" + o
-        usage()
-        sys.exit(2)
-    if not ('path' in cmd_args):
-      print "UNKNOWN - invalid arguments"
-      usage()
-      sys.exit(2)
-    try:
-      run(cmd_args)
-    except:
-      print "UNKNOWN -", sys.exc_info()[0]
-      sys.exit(2)
-
+ok, err = pcall(check, opts)
+if not ok then
+  print("UNKNOWN - plugin internal error\r\n")
+  print(err)
+end
