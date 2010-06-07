@@ -2,8 +2,9 @@
 
 -- check mysql innodb by "show status like 'Innodb_%'"
 
+dofile("plugin.lua")
+
 require "luasql.mysql"
-dofile("getopt.lua")
 
 -- do check
 function check(opts) 
