@@ -1,0 +1,5 @@
+install lua on ubuntu
+
+apt-get install lua luasql
+
+
