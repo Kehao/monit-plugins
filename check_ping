@@ -7,11 +7,11 @@ dofile("plugin.lua")
 -- do check
 function check(opts) 
   output = runcmd("ping".." -c"..opts["packets"].." -w"..opts["timeout"].." "..opts["host"])
-  i,j,pl = string.find(output, "%s(%d+%%) packet loss")
+  _,_,pl = string.find(output, "%s(%d+%%) packet loss")
   if pl == "100%" then
       print("CRITICAL - packet loss = "..pl)
   else 
-    i,j,rtmin,rta,rtmax=string.find(output, "([0-9]+.[0-9]+)/([0-9]+.[0-9]+)/([0-9]+.[0-9]+)/([0-9]+.[0-9]+) ms")
+    _,_,rtmin,rta,rtmax=string.find(output, "([0-9]+.[0-9]+)/([0-9]+.[0-9]+)/([0-9]+.[0-9]+)/([0-9]+.[0-9]+) ms")
     if pl == '0%' then
       print("OK - packet loss = "..pl..", rta = "..rta.."ms\r\n")
     else
