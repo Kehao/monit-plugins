@@ -13,7 +13,7 @@ def run(my_args):
       passwd=my_args['password'], 
       db=my_args['database'])
     cursor = conn.cursor()
-    cursor.execute("show status like 'Bytes_%'")
+    cursor.execute("show global status like 'Bytes_%'")
     result = cursor.fetchall()
   except:
     print "CRITICAL - mysql access failure"
