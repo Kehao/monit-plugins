@@ -1,54 +1,50 @@
-#!/usr/bin/env python
+#!/usr/bin/env lua
 
-"""
-scan by 'nmap' command.
-"""
+-- scan_nmap
 
-import os, re, sys, getopt
+dofile("plugin.lua")
 
-def run(args):
-  host = args['host']
-  pipe = os.popen('nmap -F -sU -sT --host-timeout 20000 ' + host)
-  output = pipe.read()
-  pipe.close
-  lines = output.split("\n")
-  ports = []
-  for line in lines:
-    if len(line) < 10:
-      continue
-    match = re.search(r'^(\d+/[udtcp]+)\s', line)
-    if match != None:
-      ports.append(line)  
-  print "OK - scan ports successfully.", "\nPort\tState\tService\n", "\n".join(ports) 
+-- do check
+function scan(opts) 
+  local output = runcmd("nmap -F -sU -sT --host-timeout 20000 "..opts["host"])
+  local patten = "^(%d+)/([tcudp]+)%s+([%w|]+)%s+([%w%-]+)$"
+  local lines = split(output, "[\r\n]+")
+  local entries = {}
+  for _,line in pairs(lines) do
+    _,_,port,proto,state,service = string.find(line, patten)
+    if service then
+      table.insert(entries, {port = port, proto = proto, state = state, service = service})
+    end
+  end
+  local tcps = filter(entries, function(entry) return (entry.proto == "tcp") end)
+  local udps = filter(entries, function(entry) return (entry.proto == "udp") end)
 
-def usage():
-    print "Usage: check_ping --host=host"
+  local tcp_ports = map(tcps, function(tcp) return tcp.port end)  
+  local udp_ports = map(udps, function(udp) return udp.port end)
 
-if __name__ == "__main__":
-  try:
-    opts, args = getopt.getopt(sys.argv[1:], "h", ["help", "host="])
-  except getopt.GetoptError, err:
-  # print help information and exit:
-    print "UNKNOWN -", str(err)
-    sys.exit(2)
-  cmd_args = {}
-  for o, a in opts:
-    if o in ("-h", "--help"):
-      usage(),
-      sys.exit(0)
-    elif o in ("--host"):
-      cmd_args['host'] = a
-    else:
-      print "UNKNOWN - error argument:" + o
-      usage()
-      sys.exit(2)
-  if not ('host' in cmd_args):
-    print "UNKNOWN - invalid arguments!"
-    usage()
-    sys.exit(2)
-  try:
-    run(cmd_args)
-  except:
-    print "UNKNOWN -", sys.exc_info()[0]
-    sys.exit(2)
+  print("OK - tcp ports = "..join(tcp_ports, "|")..", udp ports = "..join(udp_ports, "|").."\r\n")
+  for _,entry in pairs(entries) do
+    print(string.format("entry: port=%s/%s,state=%s,service=%s", 
+        entry.port, entry.proto, entry.state, entry.service))
+  end
+  -- match = re.search(r'^(\d+/[udtcp]+)\s', line)
+end
 
+-- usage
+function usage() 
+  print("Usage: scan_nmap --host=Host")
+end
+
+-- parse arguments
+opts = getopt(arg, {"host"})
+if not opts["host"] then
+  print("UNKNOWN - miss argument = 'host'\r\n")
+  usage()
+  return
+end
+
+ok, err = pcall(scan, opts)
+if not ok then
+  print("UNKNOWN - plugin internal error\r\n")
+  print(err)
+end
