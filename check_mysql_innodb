@@ -11,7 +11,7 @@ function check(opts)
   con = assert (env:connect("mysql", opts["user"], opts["password"], opts["host"], tonumber(opts["port"])))
   cur = assert (con:execute"show global variables where Variable_name = 'innodb_buffer_pool_size'")
   row = cur:fetch ({}, "a")
-  print(string.format("OK Buffer Pool Size = %sM\r\n", row.Value/(1024*1024)))
+  print(string.format("OK - Buffer Pool Size = %sM\r\n", row.Value/(1024*1024)))
   -- retrive innodb variables
   cur = assert (con:execute"show global variables like 'innodb_%'")
   row = cur:fetch ({}, "a")
