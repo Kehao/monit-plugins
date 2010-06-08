@@ -1,47 +1,35 @@
-#!/usr/bin/env python
+#!/usr/bin/env lua
 
-"""
-Check swap by free -o
-"""
-import os, re, sys, getopt
+-- check_swap_free
 
-def run(Args):
-    pipe = os.popen("free -o")
-    output = pipe.read()
-    pipe.close
-    match = re.search(r'Swap:\s*(\d+)\s+(\d+)\s+(\d+)', output) 
-    if match == None:
-        print "UNKNOWN - cannot parse", output
-        return
-    total = int(match.group(1)) * 1024
-    used = int(match.group(2))  * 1024
-    free = int(match.group(3)) * 1024
-    usage = int(used / total)
-    data = {'total': total, 'used': used, 'free': free, 'usage': str(usage) + '%'}
-    summary = "swap usage = " + str(usage) + "%"
-    metrics = ", ".join([name + "=" + str(val) for name, val in data.iteritems()])
-    print "OK -", summary, "|", metrics
+dofile("plugin.lua")
 
-def usage():
-    print "Usage: check_swap_free -h"
+-- do check
+function check() 
+  local output = os.cmd("free o")
+  local headers = {"total", "used", "free"}
+  local metrics = {string.match(output, "Swap:%s+(%d+)%s+(%d+)%s+(%d+)")}
+  if #metrics < 3 then 
+    print("UNKNOWN - no swap data\r\n") 
+    return  
+  end
+  local metrics = table.map(metrics, function(v) return tonumber(v) end)
+  local swaptab = table.zip(headers, metrics)
+  swaptab["usage"] = string.format("%.2f%%", (swaptab["used"] * 100 / swaptab["total"]))
+  print(string.format("OK - swap usage = %s\r\n", swaptab["usage"]))
+  for k,v in pairs(swaptab) do
+    print(string.format("metric: %s=%s", k, v))
+  end
+end
 
-if __name__ == "__main__":
-    try:
-        opts, args = getopt.getopt(sys.argv[1:], "h", ["help"])
-    except getopt.GetoptError, err:
-    # print help information and exit:
-        print "UNKNOWN -", str(err)
-        sys.exit(2)
-    for o, a in opts:
-        if o in ("-h", "--help"):
-            usage(),
-            sys.exit(0)
-        else:
-            print "UNKNOWN - error argument:" + o
-            usage()
-            sys.exit(2)
-    try:
-        run({})
-    except:
-        print "UNKNOWN - access status page error:", sys.exc_info()[0]
-        sys.exit(2)
+-- usage
+function usage() 
+  print("Usage: check_swap_free")
+end
+
+-- parse arguments
+ok, err = pcall(check)
+if not ok then
+  print("UNKNOWN - plugin internal error\r\n")
+  print(err)
+end

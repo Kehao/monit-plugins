@@ -1,6 +1,7 @@
 -- lua plugin utilities
 
-function filter(array, func)
+-- extend table functions
+table.filter = function(array, func)
   local new_array = {}
   for _,v in ipairs(array) do
     if func(v) then
@@ -10,7 +11,7 @@ function filter(array, func)
   return new_array
 end
 
-function map(array, func)
+table.map = function(array, func)
   local new_array = {}
   for i,v in ipairs(array) do
   new_array[i] = func(v)
@@ -18,13 +19,23 @@ function map(array, func)
   return new_array
 end
 
---string join
-function join(tab, delimiter)
+table.zip = function(array1, array2)
+  if not (#array1 == #array2) then 
+    error("cannot zip arrays with different length") 
+  end
+  local new_array = {}
+  for i,v in ipairs(array1) do
+    new_array[array1[i]] = array2[i]
+  end
+  return new_array
+end
+
+-- extend string functions
+string.join = function(tab, delimiter)
   return table.concat(tab, delimiter)
 end
 
--- string split compatibility: Lua-5.1
-function split(str, pat)
+string.split = function(str, pat)
   local t = {}  -- NOTE: use {n = 0} in Lua-5.0
   local fpat = "(.-)" .. pat
   local last_end = 1
@@ -43,8 +54,8 @@ function split(str, pat)
   return t
 end
 
--- run os command
-function runcmd(cmd) 
+-- extend os functions
+os.cmd = function(cmd) 
   local tmp = os.tmpname()
   os.execute(cmd.." > "..tmp.." 2>&1")
   local f = assert(io.open(tmp, "r"))
@@ -85,4 +96,3 @@ function getopt(arg, options )
   end
   return tab
 end
-

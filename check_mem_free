@@ -1,50 +1,37 @@
-#!/usr/bin/env python
+#!/usr/bin/env lua
 
-"""
-check_mem_free by free -o
-"""
-import os, re, sys, getopt
+-- check_mem_free
 
-def run(Args):
-    pipe = os.popen("free -o")
-    output = pipe.read()
-    pipe.close
-    if output.strip() == "":
-      print "UNKNOWN - unsupported command" 
-      return
-    lines = output.split("\n")
-    headers = re.split(r"\s+", lines[0].strip(" "))
-    meminfo = re.split(r"\s+", lines[1].strip("Mem: "))
-    mem = {}
-    for i in range(6):
-        mem[headers[i]] = int(meminfo[i]) * 1024
-    mem['usage'] = str(mem['used'] / mem['total']) + '%'
-    mem['appused'] = str(mem['used'] - mem['buffers'] - mem['cached'])
-    summary = "memory usage = " + mem['usage']
-    metrics = ",".join([name + "=" + str(val) for name, val in mem.iteritems()])
-    print "OK -", summary, "|", metrics
+dofile("plugin.lua")
 
-def usage():
-    print "Usage: check_mem_free -h"
+-- do check
+function check() 
+  local output = os.cmd("free o")
+  local headers = {"total", "used", "free", "shared", "buffers", "cached"}
+  local metrics = {string.match(output, "Mem:%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)")}
+  if #metrics < 6 then 
+    print("UNKNOWN - no memory data\r\n") 
+    return  
+  end
+  local metrics = table.map(metrics, function(v) return tonumber(v) end)
+  local memtab = table.zip(headers, metrics)
+  memtab["usage"] = string.format("%.2f%", (memtab["used"] * 100 / memtab["total"]))
+  memtab["appused"] = memtab["used"] - memtab["buffers"] - memtab["cached"]
+  memtab["appusage"] = string.format("%.2f%%", (memtab["appused"] * 100/ memtab["total"]))
+  print(string.format("OK - memory usage = %s\r\n", memtab["usage"]))
+  for k,v in pairs(memtab) do
+    print(string.format("metric: %s=%s", k, v))
+  end
+end
 
-if __name__ == "__main__":
-    try:
-        opts, args = getopt.getopt(sys.argv[1:], "h", ["help"])
-    except getopt.GetoptError, err:
-    # print help information and exit:
-        print "UNKNOWN -", str(err)
-        sys.exit(2)
-    url = None
-    for o, a in opts:
-        if o in ("-h", "--help"):
-            usage(),
-            sys.exit(0)
-        else:
-            print "UNKNOWN - error argument:" + o
-            usage()
-            sys.exit(2)
-    try:
-        run({})
-    except:
-        print "UNKNOWN -", sys.exc_info()[0]
-        sys.exit(2)
+-- usage
+function usage() 
+  print("Usage: check_mem_free")
+end
+
+-- parse arguments
+ok, err = pcall(check)
+if not ok then
+  print("UNKNOWN - plugin internal error\r\n")
+  print(err)
+end

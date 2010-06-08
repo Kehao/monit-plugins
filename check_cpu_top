@@ -1,72 +1,31 @@
-#!/usr/bin/env python
+#!/usr/bin/env lua
 
-"""
-check_cpu_top by 'top -b -n 1'
-"""
-import os, re, sys, getopt
+-- check_disk_df
 
-def run(args):
-    if 'darwin' in sys.platform:
-      #mac os x
-      pipe = os.popen('top -l 1')
-    else:
-      #linux
-      pipe = os.popen('top -b -n 1')
-    output = pipe.read()
-    pipe.close
-    lines = output.split("\n")
-    if len(lines) < 3:
-      print "UNKNOWN - unknown command output"
-      return
-    data = {}
-    cpuinfo = lines[2]
-    if 'darwin' in sys.platform:
-      #mac os x
-      match = re.search(r'(CPU usage:.+)', cpuinfo, re.DOTALL)
-      cpuinfo = match.group(1)
-      match = re.search(r'CPU usage:\s+([0-9]+.[0-9]+%)\s+user,\s+([0-9]+.[0-9]+%)\s+sys,\s+([0-9]+.[0-9]+%)\s+idle', cpuinfo)
-      data['user'] = match.group(1)
-      data['system'] = match.group(2)
-      data['idle'] = match.group(3)
-      data['iowait'] = '0.0%'
-      data['nice'] = '0.0%'
-    else:
-      #linux
-      match1 = re.search(r'\s+([0-9]+.[0-9]+%)us', cpuinfo)
-      match2 = re.search(r'\s+([0-9]+.[0-9]+%)sy', cpuinfo)
-      match3 = re.search(r'\s+([0-9]+.[0-9]+%)ni', cpuinfo)
-      match4 = re.search(r'\s+([0-9]+.[0-9]+%)id', cpuinfo)
-      match5 = re.search(r'\s+([0-9]+.[0-9]+%)wa', cpuinfo)
-      data['user'] = match1.group(1)
-      data['system'] = match2.group(1)
-      data['nice'] = match3.group(1)
-      data['idle'] = match4.group(1)
-      data['iowait'] = match5.group(1)
-    data['usage'] = str(100.00 - float(data['idle'].strip("%"))) + '%'
-    metrics = ",".join([name + "=" + val for name, val in data.iteritems()])
-    print "OK -", "usage =", data['usage'], "|", metrics
+dofile("plugin.lua")
 
-def usage():
-    print "Usage: check_cpu_top -h"
+function check() 
+  output = runcmd("top -b -n 1")
+  lines = split(output, "[\r\n]+")
+  if table.getn(lines) < 3 then
+    print "UNKNOWN - unknown command output\r\n"
+    return
+  end
+  cpuinfo = lines[3]
+  _,_,user,system,nice,idle,iowait = string.find(cpuinfo, "%s+([0-9]+.[0-9]+)%%us,%s+([0-9]+.[0-9]+)%%sy,%s+([0-9]+.[0-9]+)%%ni,%s+([0-9]+.[0-9]+)%%id,%s+([0-9]+.[0-9]+)%%wa")
+  usage = 100 - tonumber(idle)
+  print("OK - usage = "..usage.."%\r\n")
+  for k,v in pairs({usage=usage,user=user,system=system,nice=nice,idle=idle,iowait=iowait}) do
+    print(string.format("metric: %s=%s%%", k, v))
+  end
+end
 
-if __name__ == "__main__":
-    try:
-        opts, args = getopt.getopt(sys.argv[1:], "h", ["help"])
-    except getopt.GetoptError, err:
-        print "UNKNOWN -", str(err)
-        usage()
-        sys.exit(2)
-    for o, a in opts:
-      if o in ("-h", "--help"):
-        usage(),
-        sys.exit(0)
-      else:
-        print "UNKNOWN - error argument:" + o
-        usage()
-        sys.exit(2)
-    try:
-      run({})
-    except:
-      print "UNKNOWN -", sys.exc_info()[0]
-      sys.exit(2)
+function usage()
+  print("usage: check_cpu_top")
+end
 
+ok, err = pcall(check)
+if not ok then
+  print("UNKNOWN - plugin internal error\r\n")
+  print(err)
+end
