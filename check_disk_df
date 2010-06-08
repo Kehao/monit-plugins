@@ -5,11 +5,11 @@
 dofile("plugin.lua")
 
 function check(opts)
-  output = runcmd("df "..opts["path"])
-  lines = split(output, "[\r\n]+")
+  local output = os.cmd("df "..opts["path"])
+  lines = string.split(output, "[\r\n]+")
   for i,line in pairs(lines) do
     pat = "^([^%s]+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%%" 
-    _,_,fs,total,used,avail,usage = string.find(line, pat)
+    fs,total,used,avail,usage = string.match(line, pat)
     if usage then
       print(string.format("OK - usage = %s%%, total = %.2fG\r\n", usage, total/(1000*1000)))
       print("metric: usage="..usage.."%")

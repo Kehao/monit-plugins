@@ -5,23 +5,23 @@
 dofile("plugin.lua")
 
 function check() 
-  output = runcmd("top -b -n 1")
-  lines = split(output, "[\r\n]+")
-  if table.getn(lines) < 3 then
+  local output = os.cmd("top -b -n 1")
+  local names = {"user","system","nice","idle","iowait"} 
+  local values = {string.match(output, "%s+([0-9]+.[0-9]+)%%us,%s+([0-9]+.[0-9]+)%%sy,%s+([0-9]+.[0-9]+)%%ni,%s+([0-9]+.[0-9]+)%%id,%s+([0-9]+.[0-9]+)%%wa")}
+  if #values ~= 5 then
     print "UNKNOWN - unknown command output\r\n"
     return
   end
-  cpuinfo = lines[3]
-  _,_,user,system,nice,idle,iowait = string.find(cpuinfo, "%s+([0-9]+.[0-9]+)%%us,%s+([0-9]+.[0-9]+)%%sy,%s+([0-9]+.[0-9]+)%%ni,%s+([0-9]+.[0-9]+)%%id,%s+([0-9]+.[0-9]+)%%wa")
-  usage = 100 - tonumber(idle)
-  print("OK - usage = "..usage.."%\r\n")
-  for k,v in pairs({usage=usage,user=user,system=system,nice=nice,idle=idle,iowait=iowait}) do
+  metrics = table.zip(names, values)
+  usage = 100 - tonumber(metrics["idle"])
+  print(string.format("OK - usage = %.2f%%\r\n", usage))
+  for k,v in pairs(metrics) do
     print(string.format("metric: %s=%s%%", k, v))
   end
 end
 
 function usage()
-  print("usage: check_cpu_top")
+  print("Usage: check_cpu_top")
 end
 
 ok, err = pcall(check)
