@@ -1,0 +1,41 @@
+#!/usr/bin/env lua
+
+-- check linux disk
+
+dofile("plugin.lua")
+
+function check(opts)
+  local output = os.cmd("df "..opts["path"])
+  lines = string.split(output, "[\r\n]+")
+  for _,line in pairs(lines) do
+    pat = "^([^%s]+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%%" 
+    fs,total,used,avail,usage = string.match(line, pat)
+    if usage then
+      print(string.format("OK - usage = %s%%, total = %.2fG\r\n", usage, total/(1000*1000)))
+      print("metric: usage="..usage.."%")
+      print("metric: total="..total.."KB")
+      print("metric: used="..used.."KB")
+      print("metric: avail="..avail.."KB")
+      return
+    end
+  end
+  print("UNKNOWN - "..lines[1].."\r\n")
+end
+
+function usage() 
+  print("Usage: check_disk --path=Path")
+end
+
+-- parse arguments
+opts = getopt(arg, {"path"})
+if not opts["path"] then
+  print("UNKNOWN - miss argument = 'path'\r\n")
+  usage()
+  return
+end
+
+ok, err = pcall(check, opts)
+if not ok then
+  print("UNKNOWN - plugin internal error\r\n")
+  print(err)
+end

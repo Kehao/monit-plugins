@@ -1,13 +1,13 @@
 #!/usr/bin/env lua
 
--- check_disk_df
+-- check linux cpu by "top -b -n 1" 
 
 dofile("plugin.lua")
 
 function check() 
-  local output = os.cmd("top -b -n 1")
-  local names = {"user","system","nice","idle","iowait"} 
-  local values = {string.match(output, "%s+([0-9]+.[0-9]+)%%us,%s+([0-9]+.[0-9]+)%%sy,%s+([0-9]+.[0-9]+)%%ni,%s+([0-9]+.[0-9]+)%%id,%s+([0-9]+.[0-9]+)%%wa")}
+  output = os.cmd("top -b -n 1")
+  names = {"user","system","nice","idle","iowait"} 
+  values = {string.match(output, "%s+([0-9]+.[0-9]+)%%us,%s+([0-9]+.[0-9]+)%%sy,%s+([0-9]+.[0-9]+)%%ni,%s+([0-9]+.[0-9]+)%%id,%s+([0-9]+.[0-9]+)%%wa")}
   if #values ~= 5 then
     print "UNKNOWN - unknown command output\r\n"
     return
@@ -21,7 +21,7 @@ function check()
 end
 
 function usage()
-  print("Usage: check_cpu_top")
+  print("Usage: check_cpu.lua")
 end
 
 ok, err = pcall(check)

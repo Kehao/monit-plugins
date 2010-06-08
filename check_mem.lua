@@ -1,6 +1,6 @@
 #!/usr/bin/env lua
 
--- check_mem_free
+-- check linux memory
 
 dofile("plugin.lua")
 
@@ -26,7 +26,7 @@ end
 
 -- usage
 function usage() 
-  print("Usage: check_mem_free")
+  print("Usage: check_mem")
 end
 
 -- parse arguments
