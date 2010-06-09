@@ -12,7 +12,7 @@ function check(opts)
   env = assert (luasql.mysql())
   con = assert (env:connect("mysql", opts["user"], opts["password"], opts["host"], tonumber(opts["port"])))
   -- retrieve status
-  cur = assert (con:execute"show global status where Variable_name = ‘Bytes_received’ or Variable_name = ‘Bytes_sent’")
+  cur = assert (con:execute"show global status where Variable_name in('Bytes_received', 'Bytes_sent')")
   row = cur:fetch ({}, "a")
   metrics = {}
   while row do

@@ -1,0 +1,65 @@
+#!/usr/bin/env lua
+
+-- check ping
+-- author: ery.lee@gmail.com from monit.cn
+
+dofile("plugin.lua")
+
+-- do check
+function check(opts) 
+  local socket = require("socket")
+  local t1 = socket.gettime()
+  local output = os.cmd("nslookup "..opts["name"])
+  local t2 = socket.gettime()
+  local escaped_time = (t2 - t1) * 1000
+  lines = string.split(output, "\n\n")
+  if #lines < 2 then
+    print("UNKNOWN - "..lines[1])
+    return
+  end
+  addrs = {}
+  for _,line in pairs(string.split(lines[2],"\n")) do
+    addr = string.match(line, "Address:%s+([%d.]+)") 
+    if addr then table.insert(addrs, addr) end
+  end
+  if #addrs == 0 then
+    print("CRITICAL - no address found\r\n")
+    return
+  end
+  local is_ok = (opts["addrs"] == "")
+  if opts["addrs"] ~= "" then
+    for _,addr in pairs(addrs) do
+      if string.find(opts["addrs"], addr) then
+        is_ok = true
+        break
+      end
+    end
+  end
+  if is_ok then
+    print(string.format("OK - returns = %s, response time = %.2f(ms)\r\n", string.join(addrs, "|"), escaped_time))
+  else
+    print(string.format("CRITICAL - expected = '%s', got = '%s'\r\n", string.gsub(opts["addrs"],",", "|"), string.join(addrs, "|")))
+  end
+  print("metric: time="..escaped_time)
+end
+
+-- usage
+function usage() 
+  print("Usage: check_dns --name=Name --addr=Addr1,Addr2,..,Addrn")
+end
+
+-- parse arguments
+opts = getopt(arg, {"name", "addrs"})
+addrs = opts["addrs"] or ""
+opts["addrs"] = string.trim(addrs)
+if not opts["name"] then
+  print("UNKNOWN - miss argument = 'name'\r\n")
+  usage()
+  return
+end
+
+ok, err = pcall(check, opts)
+if not ok then
+  print("UNKNOWN - plugin internal error\r\n")
+  print(err)
+end

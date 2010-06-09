@@ -10,7 +10,8 @@ function check(opts)
   local http = require("socket.http")
   http.TIMEOUT = 8
   t1 = socket.gettime()
-  local b,c,h,s = http.request(opts["url"])
+  url = string.format("http://%s:%s/%s", opts["host"], opts["port"], opts["url"])
+  local b,c,h,s = http.request(url)
   t2 = socket.gettime()
   if not b then
     print("CRITICAL - "..c.."\r\n")
@@ -22,10 +23,11 @@ function check(opts)
     print("CRITICAL - status = "..s.."\r\n")
   elseif c >= 400 then
     print("WARNING - status = "..s.."\r\n")
-  else
+  else 
     print(string.format("OK - status = %s, size = %sbyte, response time = %.2fms\r\n", s, size, escaped_time))
     print("metric: size="..size)
     print("metric: time="..escaped_time)
+  end
 end
 
 -- usage
@@ -35,7 +37,9 @@ end
 
 -- parse arguments
 opts = getopt(arg, {"host", "port"})
-opts["url"] = opts["url"] or "/"
+opts["port"] = opts["port"] or "80"
+url = opts["url"] or ""
+opts["url"] = url:gsub("^/+(.-)", "%1")
 for _, o in ipairs({"host", "port"}) do
   if not opts[o] then
     print(string.format("UNKNOWN - miss argument = '%s'\r\n", o))

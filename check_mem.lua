@@ -16,10 +16,10 @@ function check()
   end
   local metrics = table.map(metrics, function(v) return tonumber(v) end)
   local memtab = table.zip(headers, metrics)
-  memtab["usage"] = string.format("%.2f%", (memtab["used"] * 100 / memtab["total"]))
+  memtab["usage"] = string.format("%.2f%%", (memtab["used"] * 100 / memtab["total"]))
   memtab["appused"] = memtab["used"] - memtab["buffers"] - memtab["cached"]
   memtab["appusage"] = string.format("%.2f%%", (memtab["appused"] * 100/ memtab["total"]))
-  print(string.format("OK - memory usage = %s\r\n", memtab["usage"]))
+  print(string.format("OK - memory usage = %s, app usage = %s\r\n", memtab["usage"], memtab["appusage"]))
   for k,v in pairs(memtab) do
     print(string.format("metric: %s=%s", k, v))
   end

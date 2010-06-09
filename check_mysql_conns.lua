@@ -16,7 +16,7 @@ function check(opts)
   -- retrieve status
   cursor = assert (conn:execute"show global variables where Variable_name in ('thread_cache_size', 'max_connections')")
   variables = {}
-  row = curor:fetch ({}, "a")
+  row = cursor:fetch ({}, "a")
   while row do
     variables[row.Variable_name] = row.Value
     row = cursor:fetch (row, "a")

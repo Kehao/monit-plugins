@@ -36,7 +36,7 @@ function check(opts)
   local metrics = {}
   lines = string.split(b, "[\r\n]+")
   for _,line in pairs(lines) do
-    kv = string.split(line, "[:%s]+")
+    kv = string.split(line, ":%s*")
     if METRICTAB[kv[1]] then
       metrics[METRICTAB[kv[1]]] = kv[2]
     end

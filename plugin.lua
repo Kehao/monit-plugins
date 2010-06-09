@@ -32,6 +32,10 @@ table.zip = function(array1, array2)
 end
 
 -- extend string functions
+string.trim = function(s)
+  return s:match"^%s*(.-)%s*$"
+end
+
 string.join = function(tab, delimiter)
   return table.concat(tab, delimiter)
 end

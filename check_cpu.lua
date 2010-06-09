@@ -16,6 +16,7 @@ function check()
   metrics = table.zip(names, values)
   usage = 100 - tonumber(metrics["idle"])
   print(string.format("OK - usage = %.2f%%\r\n", usage))
+  print("metric: usage="..usage.."%")
   for k,v in pairs(metrics) do
     print(string.format("metric: %s=%s%%", k, v))
   end
