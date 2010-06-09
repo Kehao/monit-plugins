@@ -8,6 +8,10 @@ dofile("plugin.lua")
 -- do scan
 function scan(opts) 
   local output = os.cmd("nmap -F -sU -sT --host-timeout 20000 "..opts["host"])
+  if string.find(output, "root privileges") then 
+    print("UNKNOWN - "..string.split(output, "\n")[1])
+    return
+  end
   local patten = "^(%d+)/([tcudp]+)%s+([%w|]+)%s+([%w%-]+)$"
   local lines = string.split(output, "[\r\n]+")
   local entries = {}
