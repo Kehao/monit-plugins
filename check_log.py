@@ -36,7 +36,7 @@ def run(args):
   print "metric:", metrics
 
 def usage():
-    print "Usage: check_log -h --file=file --warning=warning --critical=critical"
+    print "Usage: check_log --file=File --warning=Warning --critical=Critical"
 
 if __name__ == "__main__":
     try:
