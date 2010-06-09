@@ -1,9 +1,9 @@
 #!/usr/bin/env lua
 
 -- check mysql connections 
+-- author: ery.lee@gmail.com from monit.cn
 
 -- show global status where Variable_name in ('Connections', 'Threads_created', 'Threads_cached', 'Max_used_connections', 'Threads_running', 'Thread_connected')
-
 -- show global variables where Variable_name in ('thread_cache_size', 'max_connections')
 
 dofile("plugin.lua")

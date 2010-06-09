@@ -1,6 +1,7 @@
 #!/usr/bin/env lua
 
 -- scan_nmap
+-- author: ery.lee@gmail.com from monit.cn
 
 dofile("plugin.lua")
 

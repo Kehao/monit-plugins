@@ -1,0 +1,51 @@
+#!/usr/bin/env lua
+
+-- check nginx status
+-- author: ery.lee@gmail.com from monit.cn
+
+dofile("plugin.lua")
+
+-- do check
+function check(opts) 
+  local http = require("socket.http")
+  http.TIMEOUT = 8
+  local b,c,h,s = http.request(opts["url"])
+  if not b then
+    print("CRITICAL - "..status.."\r\n")
+    return
+  end
+  if c ~= 200 then
+    print("WARNING - "..s.."\r\n")
+    return
+  end
+  connections = string.match(b, "^Active connections:%s+(%d+)")
+  accepted,handled,requests = string.match(b, "(%d+)%s+(%d+)%s+(%d+)")
+  reading,writing,waiting = string.match(b, "Reading:%s*(%d+)%s*Writing:%s*(%d+)%s*Waiting:%s*(%d+)")
+  print("OK - Active connections = "..connections)
+  print(string.format("count-metrics: %s,%s,%s\r\n",accepted,handled,requests))
+  print("metric: connections="..connections)
+  print("metric: accepted="..accepted)
+  print("metric: handled="..handled)
+  print("metric: reading="..reading)
+  print("metric: writing="..writing)
+  print("metric: waiting="..waiting)
+end
+
+-- usage
+function usage() 
+  print("Usage: check_nginx_status --url=URL")
+end
+
+-- parse arguments
+opts = getopt(arg, {"url"})
+if not opts["url"] then
+  print("UNKNOWN - miss argument = 'url'\r\n")
+  usage()
+  return
+end
+
+ok, err = pcall(check, opts)
+if not ok then
+  print("UNKNOWN - plugin internal error\r\n")
+  print(err)
+end

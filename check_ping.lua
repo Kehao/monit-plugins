@@ -1,6 +1,7 @@
 #!/usr/bin/env lua
 
--- check_ping
+-- check ping
+-- author: ery.lee@gmail.com from monit.cn
 
 dofile("plugin.lua")
 

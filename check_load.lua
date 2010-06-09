@@ -1,6 +1,7 @@
 #!/usr/bin/env lua
 
--- check_disk_df
+-- check linux load
+-- author: ery.lee@gmail.com from monit.cn
 
 dofile("plugin.lua")
 

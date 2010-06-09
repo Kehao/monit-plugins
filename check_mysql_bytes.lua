@@ -1,6 +1,7 @@
 #!/usr/bin/env lua
 
 -- check mysql traffic by "show global status like 'Bytes_%'"
+-- author: ery.lee@gmail.com from monit.cn
 
 dofile("plugin.lua")
 

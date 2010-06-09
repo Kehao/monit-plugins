@@ -30,9 +30,10 @@ def run(args):
     matches = int(output.strip('\n'))
     if matches > 0:
       summary = "found = " + "'" + threshold[1] + "', " + "times = " +  str(matches)
-      print threshold[0], '-', summary, '|', metrics
+      print threshold[0], '-', summary + "\r\n"
       return
-  print 'OK - file size =', data['size'], 'Bytes |', metrics 
+  print 'OK - file size =', data['size'] + '(bytes)\r\n'
+  print "metric:", metrics
 
 def usage():
     print "Usage: check_log -h --file=file --warning=warning --critical=critical"

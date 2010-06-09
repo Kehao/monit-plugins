@@ -1,6 +1,7 @@
 #!/usr/bin/env lua
 
 -- check mysql innodb by "show status like 'Innodb_%'"
+-- author: ery.lee@gmail.com from monit.cn
 
 dofile("plugin.lua")
 

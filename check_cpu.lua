@@ -1,6 +1,7 @@
 #!/usr/bin/env lua
 
 -- check linux cpu by "top -b -n 1" 
+-- author: ery.lee@gmail.com from monit.cn
 
 dofile("plugin.lua")
 

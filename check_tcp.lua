@@ -1,0 +1,48 @@
+#!/usr/bin/env lua
+
+-- check tcp socket
+-- author: ery.lee@gmail.com from monit.cn
+
+dofile("plugin.lua")
+
+-- do check
+function check(opts) 
+  local socket = require("socket")
+  t1 = socket.gettime()
+  client = socket.tcp()
+  client:settimeout(6)
+  ok,err = client:connect(opts["host"], opts["port"])
+  t2 = socket.gettime()
+  if not ok then
+    print("CRITICAL - "..err.."\r\n")
+    return
+  end
+  escaped_time = (t2 - t1) * 1000
+  print(string.format("OK - port = %s, response time = %.2fms\r\n", 
+    opts["port"], escaped_time))
+  print(string.format("metric: time=%.3fms", escaped_time)
+end
+
+-- usage
+function usage() 
+  print("Usage: check_tcp --host=Host --port=Port")
+end
+
+-- parse arguments
+opts = getopt(arg, {"host", "port"})
+if not opts["host"] then
+  print("UNKNOWN - miss argument = 'host'\r\n")
+  usage()
+  return
+end
+if not opts["port"] then
+  print("UNKNOWN - miss argument = 'port'\r\n")
+  usage()
+  return
+end
+
+ok, err = pcall(check, opts)
+if not ok then
+  print("UNKNOWN - plugin internal error\r\n")
+  print(err)
+end

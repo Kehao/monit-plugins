@@ -1,6 +1,7 @@
 #!/usr/bin/env lua
 
--- check_swap_free
+-- check linux swap
+-- author: ery.lee@gmail.com from monit.cn
 
 dofile("plugin.lua")
 

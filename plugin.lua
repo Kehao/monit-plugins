@@ -1,4 +1,5 @@
 -- lua plugin utilities
+-- author: ery.lee@gmail.com from monit.cn
 
 -- extend table functions
 table.filter = function(array, func)
