@@ -18,7 +18,8 @@ function check(opts)
   cur = assert (con:execute"show global variables like 'innodb_%'")
   row = cur:fetch ({}, "a")
   while row do
-    print(string.format("attr: %s=%s", row.Variable_name, row.Value))
+    name = string.sub(row.Variable_name, string.len('innodb_') + 1)
+    print(string.format("attr:innodb %s=%s", name, row.Value))
     row = cur:fetch (row, "a")
   end
   -- retrieve innodb status

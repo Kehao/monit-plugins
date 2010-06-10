@@ -21,8 +21,9 @@ function check(opts)
     variables[row.Variable_name] = row.Value
     row = cursor:fetch (row, "a")
   end
-  cursor = assert (con:execute"show global status where Variable_name in ('Connections', 'Threads_created', 'Threads_cached', 'Max_used_connections', 'Threads_running', 'Thread_connected')")
+  cursor = assert (conn:execute"show global status where Variable_name in ('Connections', 'Threads_created', 'Threads_cached', 'Max_used_connections', 'Threads_running', 'Thread_connected')")
   metrics = {}
+  row = cursor:fetch ({}, "a")
   while row do
     metric = string.gsub(string.lower(row.Variable_name), "Threads_", "")
     metrics[metric] = row.Value
@@ -33,14 +34,14 @@ function check(opts)
   print("OK - "..summary)
   print("count-metrics: connections,created\r\n") 
   for k, v in pairs(variables) do
-    print(string.format("attr: %s=%s", k, v))
+    print(string.format("attr:conn %s=%s", k, v))
   end
   for k,v in pairs(metrics) do
     print(string.format("metric: %s=%s", k, v))
   end
   -- close everything
-  cur:close()
-  con:close()
+  cursor:close()
+  conn:close()
   env:close()
 end
 
