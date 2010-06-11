@@ -1,31 +1,39 @@
 #!/usr/bin/env lua
 
--- check mysql locks
+-- check mysql table handler
 -- author: ery.lee@gmail.com from monit.cn
 
 dofile("plugin.lua")
 
+require "luasql.mysql"
+
 -- do check
 function check(opts) 
-  require "luasql.mysql"
   env = assert (luasql.mysql())
   con = assert (env:connect("mysql", opts["user"], opts["password"], opts["host"], tonumber(opts["port"])))
   -- retrieve status
-  sql_status = [[show status where Variable_name in 
-                 ('Table_locks_immediate', 'Table_locks_waited')]]
-  cur = assert (con:execute(sql_status))
-  metrics = {}
+  cur = assert (con:execute"show global status where Variable_name = 'Com_select' or Variable_name like  'Handler_%'")
   row = cur:fetch ({}, "a")
+  metrics = {}
   while row do
-    metric = string.gsub(string.lower(row.Variable_name), "^%w+_+", "")
-    metrics[metric] = row.Value
-    row = cur:fetch(row, "a")
+    metrics[string.lower(row.Variable_name)] = row.Value
+    row = cur:fetch (row, "a")
   end
   -- print result
-  print("OK - locks_waited = "..metrics["locks_waited"])
-  print("count-metrics: locks_immediate\r\n") 
+  scan_rate = tonumber(metrics["handler_read_rnd_next"]) / tonumber(metrics["com_select"])
+  print(string.format("OK - handler scan rate = "..scan_rate))
+  counters = {}
   for k,v in pairs(metrics) do
-    print(string.format("metric: %s=%s", k, v))
+    if string.find(k, "handler") then 
+      table.insert(counters, k)
+    end
+  end
+  print("count-metrics: "..string.join(counters, ",").."\r\n") 
+  print("metric: handler_scan_rate="..scan_rate)
+  for k,v in pairs(metrics) do
+    if k ~= "com_select" then
+      print(string.format("metric: %s=%s", k, v))
+    end
   end
   -- close everything
   cur:close()
@@ -35,7 +43,7 @@ end
 
 -- usage
 function usage() 
-  print("Usage: check_mysql_locks --host=Host --user=User --password=Password --port=Port")
+  print("usage: check_mysql_handler --host=Host --user=User --password=Password --port=Port")
 end
 
 -- parse arguments

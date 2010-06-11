@@ -1,29 +1,37 @@
 #!/usr/bin/env lua
 
--- check mysql locks
+-- check mysql slow by "show global status like 'Slow_%'"
 -- author: ery.lee@gmail.com from monit.cn
 
 dofile("plugin.lua")
 
+require "luasql.mysql"
+
 -- do check
 function check(opts) 
-  require "luasql.mysql"
   env = assert (luasql.mysql())
   con = assert (env:connect("mysql", opts["user"], opts["password"], opts["host"], tonumber(opts["port"])))
-  -- retrieve status
-  sql_status = [[show status where Variable_name in 
-                 ('Table_locks_immediate', 'Table_locks_waited')]]
-  cur = assert (con:execute(sql_status))
-  metrics = {}
+  -- retrieve variables
+  variables = {}
+  cur = assert (con:execute"show global variables like '%slow%'")
   row = cur:fetch ({}, "a")
   while row do
-    metric = string.gsub(string.lower(row.Variable_name), "^%w+_+", "")
-    metrics[metric] = row.Value
-    row = cur:fetch(row, "a")
+    variables[row.Variable_name] = row.Value
+    row = cur:fetch ({}, "a")
+  end
+  -- retrieve status
+  metrics = {}
+  cur = assert (con:execute"show global status like 'Slow_%'")
+  row = cur:fetch ({}, "a")
+  while row do
+    metrics[string.lower(row.Variable_name)] = row.Value
+    row = cur:fetch (row, "a")
   end
   -- print result
-  print("OK - locks_waited = "..metrics["locks_waited"])
-  print("count-metrics: locks_immediate\r\n") 
+  print(string.format("OK - slow queries = %s, slow launch threads = %s\r\n", metrics["slow_queries"], metrics["slow_launch_threads"]))
+  for k,v in pairs(variables) do
+    print(string.format("attr:variable %s=%s", k, v))
+  end
   for k,v in pairs(metrics) do
     print(string.format("metric: %s=%s", k, v))
   end
@@ -35,7 +43,7 @@ end
 
 -- usage
 function usage() 
-  print("Usage: check_mysql_locks --host=Host --user=User --password=Password --port=Port")
+  print("usage: check_mysql_bytes --host=Host --user=User --password=Password --port=Port")
 end
 
 -- parse arguments
