@@ -1,0 +1,102 @@
+#!/usr/bin/env lua
+
+-- check mysql keys
+-- author: ery.lee@gmail.com from monit.cn
+
+dofile("plugin.lua")
+
+-- do check
+function check(opts) 
+  require "luasql.mysql"
+  env = assert (luasql.mysql())
+  con = assert (env:connect("mysql", opts["user"], opts["password"], opts["host"], tonumber(opts["port"])))
+  -- retrieve status
+  sql_variables = [[show global variables where Variable_name in 
+                    ('key_buffer_size', 'key_cache_age_threshold', 
+                     'key_cache_block_size', 'key_cache_division_limit')]]
+  cur = assert (con:execute(sql_variables))
+  variables = {}
+  row = cur:fetch ({}, "a")
+  while row do
+    variables[row.Variable_name] = row.Value
+    row = cur:fetch (row, "a")
+  end
+  sql_status = [[show global status where Variable_name in 
+                 ('Key_read_requests', 'Key_reads', 
+                  'Key_write_requests', 'Key_writes',
+                  'Key_blocks_unused', 'Key_blocks_used', 
+                  'Key_blocks_not_flushed')]]
+  cur = assert (con:execute(sql_status))
+  metrics = {}
+  row = cur:fetch ({}, "a")
+  while row do
+    metrics[string.lower(row.Variable_name)] = row.Value
+    row = cur:fetch(row, "a")
+  end
+  metrics["key_buffer_read_hits"] = 0
+  if metrics["key_read_requests"] ~= "0" then
+    metrics["key_buffer_read_hits"] = (1 - metrics["key_reads"]/metrics["key_read_requests"]) * 100
+  end
+  metrics["key_buffer_write_hits"] = 0
+  if metrics["key_write_requests"] ~= "0" then
+    metrics["key_buffer_write_hits"] = (1 - metrics["key_writes"]/metrics["key_writes_requests"]) * 100
+  end
+  -- print result
+  print(string.format("OK - key buffer size = %s, key buffer read hits=%.2f%%", 
+    variables["key_buffer_size"], metrics["key_buffer_read_hits"]))
+  print("count-metrics: key_read_requests,key_reads,key_write_requests,key_writes\r\n") 
+  for k, v in pairs(variables) do
+    print(string.format("attr:key %s=%s", k, v))
+  end
+  for k,v in pairs(metrics) do
+    print(string.format("metric: %s=%s", k, v))
+  end
+  -- close everything
+  cur:close()
+  con:close()
+  env:close()
+end
+
+function transform(input)
+    local output = {}
+    local key_reads_value = 0
+    local key_read_requests_value = 0
+    local key_cache_hit_rate_value = 0
+    for k,v in pairs(input) do
+        output[k] = v
+        if name == 'key_reads' then 
+            key_reads_value = tonumber(v)
+        end
+        if name == 'key_read_requests' then
+            key_read_requests_value = tonumber(v)
+        end
+        if (key_reads_value ~= 0) and (key_read_requests_value ~= 0) then
+            key_cache_hit_rate_value = 100 - (key_reads_value * 100) / key_read_requests_value
+        end
+    end
+    output['key_cache_hit_rate'] = string.format("%.2f", key_cache_hit_rate_value)
+    return output
+end
+
+-- usage
+function usage() 
+  print("Usage: check_mysql_key --host=Host --user=User --password=Password --port=Port")
+end
+
+-- parse arguments
+opts = getopt(arg, {"host", "password", "user", "port"})
+if not opts["port"] then opts["port"] = "3306" end
+for i, o in ipairs({"host", "password", "user"}) do
+  if not opts[o] then
+    print(string.format("UNKNOWN - miss argument = '%s'\r\n", o))
+    usage()
+    return
+  end
+end
+
+status, err = pcall(check, opts) 
+if not status then
+  print("UNKNOWN - plugin internal error\r\n")
+  print(err)
+end
+

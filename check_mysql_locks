@@ -1,32 +1,29 @@
 #!/usr/bin/env lua
 
--- check mysql commands by "show global status like 'Bytes_%'"
+-- check mysql connections 
 -- author: ery.lee@gmail.com from monit.cn
 
 dofile("plugin.lua")
 
-require "luasql.mysql"
-
 -- do check
 function check(opts) 
+  require "luasql.mysql"
   env = assert (luasql.mysql())
   con = assert (env:connect("mysql", opts["user"], opts["password"], opts["host"], tonumber(opts["port"])))
   -- retrieve status
-  cur = assert (con:execute"show global status where Variable_name in('Questions','Com_select','Com_update','Com_insert','Com_delete','Com_commit','Com_rollback');")
-  row = cur:fetch ({}, "a")
+  sql_status = [[show status where Variable_name in 
+                 ('Table_locks_immediate', 'Table_locks_waited')]]
+  cur = assert (con:execute(sql_status))
   metrics = {}
+  row = cur:fetch ({}, "a")
   while row do
-    local name = string.lower(row.Variable_name)
-    if string.find(name, "com_") then
-      name = string:sub(name, string.len("com_") + 1)
-    end
-    metrics[name] = row.Value
-    row = cur:fetch (row, "a")
+    metric = string.gsub(string.lower(row.Variable_name), "^%w+_+", "")
+    metrics[metric] = row.Value
+    row = cur:fetch(row, "a")
   end
-  metrics["transactions"] = tonumber(metrics["commit"]) + tonumber(metrics["rollback"])
   -- print result
-  print("OK - questions = "..metrics['questions'])
-  print("count-metrics: questions,transactions,select,update,insert,delete,commit,rollback\r\n") 
+  print("OK - locks_waited = "..metrics["locks_waited"])
+  print("count-metrics: locks_immediate\r\n") 
   for k,v in pairs(metrics) do
     print(string.format("metric: %s=%s", k, v))
   end
@@ -38,7 +35,7 @@ end
 
 -- usage
 function usage() 
-  print("usage: check_mysql_cmd --host=Host --user=User --password=Password --port=Port")
+  print("Usage: check_mysql_locks --host=Host --user=User --password=Password --port=Port")
 end
 
 -- parse arguments

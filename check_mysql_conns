@@ -21,16 +21,17 @@ function check(opts)
     variables[row.Variable_name] = row.Value
     row = cursor:fetch (row, "a")
   end
-  cursor = assert (conn:execute"show global status where Variable_name in ('Connections', 'Threads_created', 'Threads_cached', 'Max_used_connections', 'Threads_running', 'Thread_connected')")
+  cursor = assert (conn:execute"show global status where Variable_name in ('Connections', 'Threads_created', 'Threads_cached', 'Max_used_connections', 'Threads_running', 'Threads_connected')")
   metrics = {}
   row = cursor:fetch ({}, "a")
   while row do
-    metric = string.gsub(string.lower(row.Variable_name), "Threads_", "")
+    metric = string.gsub(string.lower(row.Variable_name), "threads_", "")
     metrics[metric] = row.Value
     row = cursor:fetch(row, "a")
   end
+  metrics["thread_cache_hits"] = (1 - tonumber(metrics["created"])/tonumber(metrics["connections"])) * 100
   -- print result
-  summary = string.format("thread_cache_size = %s, max_connections = %s", variables["thread_cache_size"], variables["max_connections"])
+  summary = string.format("thread_cache_hits = %.2f%%, thread_cache_size = %s, max_connections = %s", metrics["thread_cache_hits"], variables["thread_cache_size"], variables["max_connections"])
   print("OK - "..summary)
   print("count-metrics: connections,created\r\n") 
   for k, v in pairs(variables) do
