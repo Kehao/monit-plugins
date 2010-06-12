@@ -9,7 +9,7 @@ require("plugin")
 function check(opts) 
   require("luasql.mysql")
   env = assert (luasql.mysql())
-  con = assert (env:connect("mysql", opts["user"], opts["password"], opts["host"], tonumber(opts["port"])))
+  con = assert (env:connect("mysql", opts["username"], opts["password"], opts["host"], tonumber(opts["port"])))
   -- retrieve status
   cur = assert (con:execute"show global status where Variable_name in('Questions','Com_select','Com_update','Com_insert','Com_delete','Com_commit','Com_rollback');")
   row = cur:fetch ({}, "a")
@@ -37,13 +37,13 @@ end
 
 -- usage
 function usage() 
-  print("usage: check_mysql_cmd --host=Host --user=User --password=Password --port=Port")
+  print("usage: check_mysql_cmd --host=Host --username=User --password=Password --port=Port")
 end
 
 -- parse arguments
-opts = getopt(arg, {"host", "password", "user", "port"})
+opts = getopt(arg, {"host", "password", "username", "port"})
 if not opts["port"] then opts["port"] = "3306" end
-for i, o in ipairs({"host", "password", "user"}) do
+for i, o in ipairs({"host", "password", "username"}) do
   if not opts[o] then
     print(string.format("UNKNOWN - miss argument = '%s'\r\n", o))
     usage()

@@ -15,7 +15,6 @@ def run(args):
   data['atime'] = str(int(os.path.getatime(file)))
   data['mtime'] = str(int(os.path.getmtime(file)))
   data['ctime'] = str(int(os.path.getmtime(file)))
-  metrics = ",".join([name + "=" + val for name, val in data.iteritems()])
   threshold = []
   if ("critical" in args) and (args['critical'] != ""):
     threshold = ['CRITICAL', args['critical']]
@@ -33,7 +32,9 @@ def run(args):
       print threshold[0], '-', summary + "\r\n"
       return
   print 'OK - file size =', data['size'] + '(bytes)\r\n'
-  print "metric:", metrics
+
+  for name, val in data.iteritems():
+    print "metric:",name,"=",val
 
 def usage():
     print "Usage: check_log --file=File --warning=Warning --critical=Critical"

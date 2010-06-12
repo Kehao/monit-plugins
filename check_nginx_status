@@ -11,7 +11,7 @@ function check(opts)
   http.TIMEOUT = 8
   local b,c,h,s = http.request(opts["url"])
   if not b then
-    print("CRITICAL - "..status.."\r\n")
+    print("CRITICAL - "..c.."\r\n")
     return
   end
   if c ~= 200 then
@@ -19,6 +19,10 @@ function check(opts)
     return
   end
   connections = string.match(b, "^Active connections:%s+(%d+)")
+  if not connections then
+    print("UNKNOWN - invalid content\r\n")
+    return 
+  end
   accepted,handled,requests = string.match(b, "(%d+)%s+(%d+)%s+(%d+)")
   reading,writing,waiting = string.match(b, "Reading:%s*(%d+)%s*Writing:%s*(%d+)%s*Waiting:%s*(%d+)")
   print("OK - Active connections = "..connections)

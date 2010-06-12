@@ -2,4 +2,6 @@ install lua on ubuntu
 
 apt-get install lua luasql luasocket
 
+set lua path
 
+export LUA_PATH={INSTALL_DIR}/plugins/?.lua
