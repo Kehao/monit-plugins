@@ -3,7 +3,7 @@
 -- check linux disk
 -- author: ery.lee@gmail.com from monit.cn
 
-dofile("plugin.lua")
+require("plugin")
 
 function check(opts)
   local output = os.cmd("df "..opts["path"])

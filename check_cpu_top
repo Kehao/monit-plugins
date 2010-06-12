@@ -3,7 +3,7 @@
 -- check linux cpu by "top -b -n 1" 
 -- author: ery.lee@gmail.com from monit.cn
 
-dofile("plugin.lua")
+require("plugin")
 
 function check() 
   output = os.cmd("top -b -n 1")

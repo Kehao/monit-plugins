@@ -3,7 +3,7 @@
 -- check http port
 -- author: ery.lee@gmail.com from monit.cn
 
-dofile("plugin.lua")
+require("plugin")
 
 -- do check
 function check(opts) 

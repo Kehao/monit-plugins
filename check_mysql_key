@@ -3,7 +3,7 @@
 -- check mysql keys
 -- author: ery.lee@gmail.com from monit.cn
 
-dofile("plugin.lua")
+require("plugin")
 
 -- do check
 function check(opts) 
@@ -46,7 +46,7 @@ function check(opts)
     variables["key_buffer_size"], metrics["key_buffer_read_hits"]))
   print("count-metrics: key_read_requests,key_reads,key_write_requests,key_writes\r\n") 
   for k, v in pairs(variables) do
-    print(string.format("attr:key %s=%s", k, v))
+    print(string.format("attr:variable %s=%s", k, v))
   end
   for k,v in pairs(metrics) do
     print(string.format("metric: %s=%s", k, v))

@@ -3,12 +3,11 @@
 -- check mysql slow by "show global status like 'Slow_%'"
 -- author: ery.lee@gmail.com from monit.cn
 
-dofile("plugin.lua")
-
-require "luasql.mysql"
+require("plugin")
 
 -- do check
 function check(opts) 
+  require "luasql.mysql"
   env = assert (luasql.mysql())
   con = assert (env:connect("mysql", opts["user"], opts["password"], opts["host"], tonumber(opts["port"])))
   -- retrieve variables

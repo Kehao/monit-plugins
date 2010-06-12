@@ -3,7 +3,7 @@
 -- discover linux disks
 -- author: ery.lee@gmail.com from monit.cn
 
-dofile("plugin.lua")
+require("plugin")
 
 function disco()
   output = os.cmd("df")

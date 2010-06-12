@@ -3,7 +3,7 @@
 -- scan_nmap
 -- author: ery.lee@gmail.com from monit.cn
 
-dofile("plugin.lua")
+require("plugin")
 
 -- do scan
 function scan(opts) 

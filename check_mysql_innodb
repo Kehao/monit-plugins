@@ -3,12 +3,11 @@
 -- check mysql innodb by "show status like 'Innodb_%'"
 -- author: ery.lee@gmail.com from monit.cn
 
-dofile("plugin.lua")
-
-require "luasql.mysql"
+require("plugin.lua")
 
 -- do check
 function check(opts) 
+  require "luasql.mysql"
   env = assert (luasql.mysql())
   con = assert (env:connect("mysql", opts["user"], opts["password"], opts["host"], tonumber(opts["port"])))
   cur = assert (con:execute"show global variables where Variable_name = 'innodb_buffer_pool_size'")
@@ -19,7 +18,7 @@ function check(opts)
   row = cur:fetch ({}, "a")
   while row do
     name = string.sub(row.Variable_name, string.len('innodb_') + 1)
-    print(string.format("attr:innodb %s=%s", name, row.Value))
+    print(string.format("attr:variable %s=%s", name, row.Value))
     row = cur:fetch (row, "a")
   end
   -- retrieve innodb status
