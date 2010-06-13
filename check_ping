@@ -8,11 +8,16 @@ require("plugin")
 -- do check
 function check(opts) 
   output = os.cmd("ping".." -c"..opts["packets"].." -w"..opts["timeout"].." "..opts["host"])
-  _,_,pl = string.find(output, "%s(%d+%%) packet loss")
+  pl = string.match(output, "%s(%d+%%) packet loss")
   if pl == "100%" then
       print("CRITICAL - packet loss = "..pl)
   else 
-    _,_,rtmin,rta,rtmax=string.find(output, "([0-9]+.[0-9]+)/([0-9]+.[0-9]+)/([0-9]+.[0-9]+)/([0-9]+.[0-9]+) ms")
+    rtmin,rta,rtmax=string.match(output, "([0-9]+.[0-9]+)/([0-9]+.[0-9]+)/([0-9]+.[0-9]+)/([0-9]+.[0-9]+) ms")
+    if not rta then
+      print("UNKNOWN - no 'rta' foundl\r\n")
+      print(output)
+      return
+    end
     if pl == '0%' then
       print("OK - packet loss = "..pl..", rta = "..rta.."ms\r\n")
     else

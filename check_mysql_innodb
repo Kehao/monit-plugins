@@ -18,7 +18,7 @@ function check(opts)
   row = cur:fetch ({}, "a")
   while row do
     name = string.sub(row.Variable_name, string.len('innodb_') + 1)
-    print(string.format("attr:variable %s=%s", name, row.Value))
+    print(string.format("attr:variable: %s=%s", name, row.Value))
     row = cur:fetch (row, "a")
   end
   -- retrieve innodb status

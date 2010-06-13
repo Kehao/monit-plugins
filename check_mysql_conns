@@ -14,7 +14,7 @@ function check(opts)
   env = assert (luasql.mysql())
   conn = assert (env:connect("mysql", opts["username"], opts["password"], opts["host"], tonumber(opts["port"])))
   -- retrieve status
-  cursor = assert (conn:execute"show global variables where Variable_name in ('thread_cache_size', 'max_connections')")
+  cursor = assert (conn:execute("show global variables where Variable_name = 'thread_cache_size' or Variable_name = 'max_connections'"))
   variables = {}
   row = cursor:fetch ({}, "a")
   while row do
@@ -35,7 +35,7 @@ function check(opts)
   print("OK - "..summary)
   print("count-metrics: connections,created\r\n") 
   for k, v in pairs(variables) do
-    print(string.format("attr:variable %s=%s", k, v))
+    print(string.format("attr:variable: %s=%s", k, v))
   end
   for k,v in pairs(metrics) do
     print(string.format("metric: %s=%s", k, v))

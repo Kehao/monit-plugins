@@ -1,6 +1,6 @@
 #!/usr/bin/env lua
 
--- check linux task
+-- check linux task number
 -- author: ery.lee@gmail.com from monit.cn
 
 require("plugin")
