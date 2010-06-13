@@ -39,7 +39,7 @@ function check(opts)
   end
   metrics["key_buffer_write_hits"] = 0
   if metrics["key_write_requests"] ~= "0" then
-    metrics["key_buffer_write_hits"] = (1 - metrics["key_writes"]/metrics["key_writes_requests"]) * 100
+    metrics["key_buffer_write_hits"] = (1 - metrics["key_writes"]/metrics["key_write_requests"]) * 100
   end
   -- print result
   print(string.format("OK - key buffer size = %s, key buffer read hits=%.2f%%", 

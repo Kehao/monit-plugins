@@ -1,0 +1,52 @@
+#!/usr/bin/env lua
+
+-- check mysql variables by "show global variables"
+-- author: ery.lee@gmail.com from monit.cn
+
+require("plugin")
+
+-- do check
+function check(opts) 
+  require "luasql.mysql"
+  env = assert (luasql.mysql())
+  con = assert (env:connect("mysql", opts["username"], opts["password"], opts["host"], tonumber(opts["port"])))
+  variables = {}
+  cur = assert (con:execute"show global variables")
+  row = cur:fetch ({}, "a")
+  while row do
+    variables[row.Variable_name] = row.Value
+    row = cur:fetch ({}, "a")
+  end
+  -- print result
+  print("OK - variables collected\r\n")
+  for k,v in pairs(variables) do
+    print(string.format("attr:variable: %s=%s", k, v))
+  end
+  -- close everything
+  cur:close()
+  con:close()
+  env:close()
+end
+
+-- usage
+function usage() 
+  print("usage: check_mysql_vars --host=Host --username=User --password=Password --port=Port")
+end
+
+-- parse arguments
+opts = getopt(arg, {"host", "password", "username", "port"})
+if not opts["port"] then opts["port"] = "3306" end
+for i, o in ipairs({"host", "password", "username"}) do
+  if not opts[o] then
+    print(string.format("UNKNOWN - miss argument = '%s'\r\n", o))
+    usage()
+    return
+  end
+end
+
+status, err = pcall(check, opts) 
+if not status then
+  print("UNKNOWN - plugin internal error\r\n")
+  print(err)
+end
+

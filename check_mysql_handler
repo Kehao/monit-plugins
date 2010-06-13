@@ -20,7 +20,7 @@ function check(opts)
   end
   -- print result
   scan_rate = tonumber(metrics["handler_read_rnd_next"]) / tonumber(metrics["com_select"])
-  print(string.format("OK - handler scan rate = "..scan_rate))
+  print(string.format("OK - handler scan rate = %.2f", scan_rate))
   counters = {}
   for k,v in pairs(metrics) do
     if string.find(k, "handler") then 
