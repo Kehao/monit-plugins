@@ -18,7 +18,7 @@ function check(opts)
   row = cur:fetch ({}, "a")
   while row do
     name = string.sub(row.Variable_name, string.len('innodb_') + 1)
-    print(string.format("entry:variable: %s=%s", name, row.Value))
+    print(string.format("entry:variable:%s: %s", name, row.Value))
     row = cur:fetch (row, "a")
   end
   -- retrieve innodb status
@@ -26,7 +26,7 @@ function check(opts)
   row = cur:fetch ({}, "a")
   while row do
     metric = string.sub(row.Variable_name, string.len('Innodb_') + 1)
-    print(string.format("metric: %s=%s", metric, row.Value))
+    print(string.format("metric:%s: %s", metric, row.Value))
     row = cur:fetch (row, "a")
   end
   -- close everything

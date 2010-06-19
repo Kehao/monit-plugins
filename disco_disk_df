@@ -21,16 +21,16 @@ function disco()
   end)
   print("OK - found "..#disks.." disks\r\n")
   for _,disk in pairs(disks) do
-    print(string.format("entry:disk: path=%s,fs=%s,total=%sKB", disk[6], disk[1], disk[2]))
+    print(string.format("entry:disk:%s: path=%s,fs=%s,total=%sKB", disk[6], disk[6], disk[1], disk[2]))
   end
   for _,disk in pairs(disks) do
-    print(string.format("service: name=Disk-%s,command=check_disk_df,params=path=%s", disk[6], disk[6]))
+    print(string.format("service:check_disk_df:Disk-%s: path=%s", disk[6], disk[6]))
   end
 end
 
 -- usage
 function usage() 
-  print("Usage: disco_disk")
+  print("Usage: disco_disk_df")
 end
 
 ok, err = pcall(disco)

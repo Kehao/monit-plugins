@@ -21,7 +21,7 @@ function check()
   memtab["appusage"] = string.format("%.2f%%", (memtab["appused"] * 100/ memtab["total"]))
   print(string.format("OK - memory usage = %s, app usage = %s\r\n", memtab["usage"], memtab["appusage"]))
   for k,v in pairs(memtab) do
-    print(string.format("metric: %s=%s", k, v))
+    print(string.format("metric:%s: %s", k, v))
   end
 end
 

@@ -31,7 +31,7 @@ function check(opts)
   print("metric: handler_scan_rate="..scan_rate)
   for k,v in pairs(metrics) do
     if k ~= "com_select" then
-      print(string.format("metric: %s=%s", k, v))
+      print(string.format("metric:%s: %s", k, v))
     end
   end
   -- close everything

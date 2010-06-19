@@ -40,7 +40,7 @@ function check(opts)
   print(string.format("OK - total accesses = %s, total kbytes = %s", metrics["total_accesses"], metrics["total_kbytes"]))
   print("count-metrics: total_accesses,total_kbytes\r\n")
   for k,v in pairs(metrics) do
-    print(string.format("metric: %s=%s", k, tonumber(v)))
+    print(string.format("metric:%s: %s", k, tonumber(v)))
   end
 end
 

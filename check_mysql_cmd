@@ -24,7 +24,7 @@ function check(opts)
   print(string.format("OK - questions = %s, transactions = %s", metrics['questions'], metrics['transactions']))
   print("count-metrics: questions,transactions,select,update,insert,delete,commit,rollback\r\n") 
   for k,v in pairs(metrics) do
-    print(string.format("metric: %s=%s", k, v))
+    print(string.format("metric:%s: %s", k, v))
   end
   -- close everything
   cur:close()

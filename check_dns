@@ -40,7 +40,7 @@ function check(opts)
   else
     print(string.format("CRITICAL - expected = '%s', got = '%s'\r\n", string.gsub(opts["addrs"],",", "|"), string.join(addrs, "|")))
   end
-  print("metric: time="..escaped_time)
+  print("metric:time: "..escaped_time)
 end
 
 -- usage

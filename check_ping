@@ -25,10 +25,10 @@ function check(opts)
   else
     print(string.format("WARNING - packet loss = %s, rta = %sms\r\n", pl, rta))
   end
-  print("metric: pl="..pl)
-  print("metric: rta="..rta.."ms")
-  print("metric: rtmin="..rtmin.."ms")
-  print("metric: rtmax="..rtmax.."ms")
+  print("metric:pl: "..pl)
+  print("metric:rta: "..rta.."ms")
+  print("metric:rtmin: "..rtmin.."ms")
+  print("metric:rtmax: "..rtmax.."ms")
 end
 
 -- usage

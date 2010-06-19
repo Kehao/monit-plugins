@@ -23,7 +23,7 @@ function check(opts)
   print(string.format("OK - sent = %s, received = %s", metrics["sent"], metrics["received"]))
   print("count-metrics: sent,received\r\n") 
   for k,v in pairs(metrics) do
-    print(string.format("metric: %s=%s", k, v))
+    print(string.format("metric:%s: %s", k, v))
   end
   -- close everything
   cur:close()

@@ -34,7 +34,7 @@ def run(args):
   print 'OK - file size =', data['size'] + '(bytes)\r\n'
 
   for name, val in data.iteritems():
-    print "metric:",name,"=",val
+    print "metric:",name,": ",val
 
 def usage():
     print "Usage: check_log --file=File --warning=Warning --critical=Critical"

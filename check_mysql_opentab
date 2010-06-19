@@ -40,10 +40,10 @@ function check(opts)
   print(string.format("OK - table open cache = %s, open tables = %s", variables["table_open_cache"], metrics["open_tables"]))
   print("count-metrics: opened_tables\r\n") 
   for k, v in pairs(variables) do
-    print(string.format("metric: %s=%s", k, v))
+    print(string.format("entry:variable:%s: %s", k, v))
   end
   for k,v in pairs(metrics) do
-    print(string.format("metric: %s=%s", k, v))
+    print(string.format("metric:%s: %s", k, v))
   end
   -- close everything
   cur:close()

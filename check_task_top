@@ -14,9 +14,9 @@ function check()
     return
   end
   print("OK - total = "..metrics[1].."\r\n")
-  print("metric: total="..metrics[1])
-  print("metric: running="..metrics[2])
-  print("metric: sleeping="..metrics[3])
+  print("metric:total: "..metrics[1])
+  print("metric:running: "..metrics[2])
+  print("metric:sleeping: "..metrics[3])
 end
 
 function usage()

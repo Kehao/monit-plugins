@@ -13,10 +13,10 @@ function check(opts)
     fs,total,used,avail,usage = string.match(line, pat)
     if usage then
       print(string.format("OK - usage = %s%%, total = %.2fG\r\n", usage, total/(1000*1000)))
-      print("metric: usage="..usage.."%")
-      print("metric: total="..total.."KB")
-      print("metric: used="..used.."KB")
-      print("metric: avail="..avail.."KB")
+      print("metric:usage: "..usage.."%")
+      print("metric:total: "..total.."KB")
+      print("metric:used: "..used.."KB")
+      print("metric:avail: "..avail.."KB")
       return
     end
   end

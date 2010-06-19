@@ -25,8 +25,8 @@ function check(opts)
     print("WARNING - status = "..s.."\r\n")
   else 
     print(string.format("OK - status = %s, size = %sbyte, response time = %.2fms\r\n", s, size, escaped_time))
-    print("metric: size="..size)
-    print("metric: time="..escaped_time)
+    print("metric:size: "..size)
+    print("metric:time: "..escaped_time)
   end
 end
 

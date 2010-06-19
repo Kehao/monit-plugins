@@ -43,7 +43,7 @@ function check(opts)
   end
   print(string.format("OK - request per second = %s, bytes per second = %s\r\n", metrics["req_per_sec"], metrics["bytes_per_sec"]))
   for k,v in pairs(metrics) do
-    print(string.format("metric: %s=%s", k, tonumber(v)))
+    print(string.format("metric:%s: %s", k, tonumber(v)))
   end
 end
 

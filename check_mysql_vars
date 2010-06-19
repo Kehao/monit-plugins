@@ -20,7 +20,7 @@ function check(opts)
   -- print result
   print("OK - variables collected\r\n")
   for k,v in pairs(variables) do
-    print(string.format("entry:variable: %s=%s", k, v))
+    print(string.format("entry:variable:%s: %s", k, v))
   end
   -- close everything
   cur:close()

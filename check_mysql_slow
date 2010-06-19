@@ -32,7 +32,7 @@ function check(opts)
     print(string.format("entry:variable: %s=%s", k, v))
   end
   for k,v in pairs(metrics) do
-    print(string.format("metric: %s=%s", k, v))
+    print(string.format("metric:%s: %s", k, v))
   end
   -- close everything
   cur:close()

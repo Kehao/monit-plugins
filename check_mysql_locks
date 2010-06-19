@@ -25,7 +25,7 @@ function check(opts)
   print("OK - locks_waited = "..metrics["locks_waited"])
   print("count-metrics: locks_immediate\r\n") 
   for k,v in pairs(metrics) do
-    print(string.format("metric: %s=%s", k, v))
+    print(string.format("metric:%s: %s", k, v))
   end
   -- close everything
   cur:close()

@@ -20,7 +20,7 @@ function check(opts)
   escaped_time = (t2 - t1) * 1000
   print(string.format("OK - port = %s, response time = %.2fms\r\n", 
     opts["port"], escaped_time))
-  print(string.format("metric: time=%.3fms", escaped_time))
+  print(string.format("metric:time: %.3fms", escaped_time))
 end
 
 -- usage
