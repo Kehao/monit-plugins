@@ -43,7 +43,7 @@ end
 
 -- parse arguments
 opts = getopt(arg, {"url"})
-if not opts["url"] then
+if (not opts["url"]) or (string.trim(opts["url"]) == "") then
   print("UNKNOWN - miss argument = 'url'\r\n")
   usage()
   return

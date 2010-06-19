@@ -42,11 +42,11 @@ function check(opts)
     metrics["key_buffer_write_hits"] = (1 - metrics["key_writes"]/metrics["key_write_requests"]) * 100
   end
   -- print result
-  print(string.format("OK - key buffer size = %s, key buffer read hits=%.2f%%", 
+  print(string.format("OK - key buffer size = %s, key buffer read hits = %.2f%%", 
     variables["key_buffer_size"], metrics["key_buffer_read_hits"]))
   print("count-metrics: key_read_requests,key_reads,key_write_requests,key_writes\r\n") 
   for k, v in pairs(variables) do
-    print(string.format("attr:variable: %s=%s", k, v))
+    print(string.format("entry:variable: %s=%s", k, v))
   end
   for k,v in pairs(metrics) do
     print(string.format("metric: %s=%s", k, v))

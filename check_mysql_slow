@@ -29,7 +29,7 @@ function check(opts)
   -- print result
   print(string.format("OK - slow queries = %s, slow launch threads = %s\r\n", metrics["slow_queries"], metrics["slow_launch_threads"]))
   for k,v in pairs(variables) do
-    print(string.format("attr:variable: %s=%s", k, v))
+    print(string.format("entry:variable: %s=%s", k, v))
   end
   for k,v in pairs(metrics) do
     print(string.format("metric: %s=%s", k, v))
