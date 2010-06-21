@@ -11,19 +11,19 @@ function check(opts)
   output = os.cmd("ping".." -c "..opts["packets"].." -w "..opts["timeout"].." "..opts["host"])
   pl = string.match(output, "%s(%d+%%) packet loss")
   if not pl then
-    print("UNKNOWN - ping error\r\n")
+    print("UNKNOWN - ping error\n")
     print(output)
     return
   end
   if pl == "100%" then
-    print("CRITICAL - packet loss = "..pl.."\r\n")
+    print("CRITICAL - packet loss = "..pl.."\n")
     return
   end
   rtmin,rta,rtmax=string.match(output, "([0-9]+.[0-9]+)/([0-9]+.[0-9]+)/([0-9]+.[0-9]+)/([0-9]+.[0-9]+) ms")
   if pl == "0%" then
-    print(string.format("OK - packet loss = %s, rta = %sms\r\n", pl, rta))
+    print(string.format("OK - packet loss = %s, rta = %sms\n", pl, rta))
   else
-    print(string.format("WARNING - packet loss = %s, rta = %sms\r\n", pl, rta))
+    print(string.format("WARNING - packet loss = %s, rta = %sms\n", pl, rta))
   end
   print("metric:pl: "..pl)
   print("metric:rta: "..rta.."ms")
@@ -41,13 +41,13 @@ opts = getopt(arg, {"host", "packets", "timeout"})
 opts["packets"] = opts["packets"] or "4"
 opts["timeout"] = opts["timeout"] or "8"
 if not opts["host"] then
-  print("UNKNOWN - miss argument = 'host'\r\n")
+  print("UNKNOWN - miss argument = 'host'\n")
   usage()
   return
 end
 
 ok, err = pcall(check, opts)
 if not ok then
-  print("UNKNOWN - plugin internal error\r\n")
+  print("UNKNOWN - plugin internal error\n")
   print(err)
 end

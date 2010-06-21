@@ -44,7 +44,7 @@ function check(opts)
   -- print result
   print(string.format("OK - key buffer size = %s, key buffer read hits = %.2f%%", 
     variables["key_buffer_size"], metrics["key_buffer_read_hits"]))
-  print("count-metrics: key_read_requests,key_reads,key_write_requests,key_writes\r\n") 
+  print("count-metrics: key_read_requests,key_reads,key_write_requests,key_writes\n") 
   for k, v in pairs(variables) do
     print(string.format("entry:variable:%s: %s", k, v))
   end
@@ -88,7 +88,7 @@ opts = getopt(arg, {"host", "password", "username", "port"})
 if not opts["port"] then opts["port"] = "3306" end
 for i, o in ipairs({"host", "password", "username"}) do
   if not opts[o] then
-    print(string.format("UNKNOWN - miss argument = '%s'\r\n", o))
+    print(string.format("UNKNOWN - miss argument = '%s'\n", o))
     usage()
     return
   end
@@ -96,7 +96,7 @@ end
 
 status, err = pcall(check, opts) 
 if not status then
-  print("UNKNOWN - plugin internal error\r\n")
+  print("UNKNOWN - plugin internal error\n")
   print(err)
 end
 

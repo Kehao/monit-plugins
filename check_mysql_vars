@@ -18,7 +18,7 @@ function check(opts)
     row = cur:fetch ({}, "a")
   end
   -- print result
-  print("OK - variables collected\r\n")
+  print("OK - variables collected\n")
   for k,v in pairs(variables) do
     print(string.format("entry:variable:%s: %s", k, v))
   end
@@ -38,7 +38,7 @@ opts = getopt(arg, {"host", "password", "username", "port"})
 if not opts["port"] then opts["port"] = "3306" end
 for i, o in ipairs({"host", "password", "username"}) do
   if not opts[o] then
-    print(string.format("UNKNOWN - miss argument = '%s'\r\n", o))
+    print(string.format("UNKNOWN - miss argument = '%s'\n", o))
     usage()
     return
   end
@@ -46,7 +46,7 @@ end
 
 status, err = pcall(check, opts) 
 if not status then
-  print("UNKNOWN - plugin internal error\r\n")
+  print("UNKNOWN - plugin internal error\n")
   print(err)
 end
 

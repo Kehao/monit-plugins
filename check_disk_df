@@ -12,7 +12,7 @@ function check(opts)
     pat = "^([^%s]+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%%" 
     fs,total,used,avail,usage = string.match(line, pat)
     if usage then
-      print(string.format("OK - usage = %s%%, total = %.2fG\r\n", usage, total/(1000*1000)))
+      print(string.format("OK - usage = %s%%, total = %.2fG\n", usage, total/(1000*1000)))
       print("metric:usage: "..usage.."%")
       print("metric:total: "..total.."KB")
       print("metric:used: "..used.."KB")
@@ -20,7 +20,7 @@ function check(opts)
       return
     end
   end
-  print("UNKNOWN - "..lines[1].."\r\n")
+  print("UNKNOWN - "..lines[1].."\n")
 end
 
 function usage() 
@@ -30,13 +30,13 @@ end
 -- parse arguments
 opts = getopt(arg, {"path"})
 if not opts["path"] then
-  print("UNKNOWN - miss argument = 'path'\r\n")
+  print("UNKNOWN - miss argument = 'path'\n")
   usage()
   return
 end
 
 ok, err = pcall(check, opts)
 if not ok then
-  print("UNKNOWN - plugin internal error\r\n")
+  print("UNKNOWN - plugin internal error\n")
   print(err)
 end

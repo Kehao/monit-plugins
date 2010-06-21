@@ -14,17 +14,17 @@ function check(opts)
   local b,c,h,s = http.request(url)
   t2 = socket.gettime()
   if not b then
-    print("CRITICAL - "..c.."\r\n")
+    print("CRITICAL - "..c.."\n")
     return
   end
   size = string.len(b)
   escaped_time = (t2 -t1) * 1000
   if c >= 500 then
-    print("CRITICAL - status = "..s.."\r\n")
+    print("CRITICAL - status = "..s.."\n")
   elseif c >= 400 then
-    print("WARNING - status = "..s.."\r\n")
+    print("WARNING - status = "..s.."\n")
   else 
-    print(string.format("OK - status = %s, size = %sbyte, response time = %.2fms\r\n", s, size, escaped_time))
+    print(string.format("OK - status = %s, size = %sbyte, response time = %.2fms\n", s, size, escaped_time))
     print("metric:size: "..size)
     print("metric:time: "..escaped_time)
   end
@@ -42,7 +42,7 @@ url = opts["url"] or ""
 opts["url"] = url:gsub("^/+(.-)", "%1")
 for _, o in ipairs({"host", "port"}) do
   if not opts[o] then
-    print(string.format("UNKNOWN - miss argument = '%s'\r\n", o))
+    print(string.format("UNKNOWN - miss argument = '%s'\n", o))
     usage()
     return
   end
@@ -50,6 +50,6 @@ end
 
 ok, err = pcall(check, opts)
 if not ok then
-  print("UNKNOWN - plugin internal error\r\n")
+  print("UNKNOWN - plugin internal error\n")
   print(err)
 end

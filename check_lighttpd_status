@@ -18,15 +18,15 @@ function check(opts)
   http.TIMEOUT = 8
   local b,c,h,s = http.request(opts["url"])
   if not b then
-    print("CRITICAL - "..status.."\r\n")
+    print("CRITICAL - "..status.."\n")
     return
   end
   if c ~= 200 then
-    print("WARNING - "..s.."\r\n")
+    print("WARNING - "..s.."\n")
     return
   end
   if not string.find(b, "^Total Accesses:") then
-    print("WARNING - invalid body content\r\n")
+    print("WARNING - invalid body content\n")
     return
   end
   local metrics = {}
@@ -38,7 +38,7 @@ function check(opts)
     end
   end
   print(string.format("OK - total accesses = %s, total kbytes = %s", metrics["total_accesses"], metrics["total_kbytes"]))
-  print("count-metrics: total_accesses,total_kbytes\r\n")
+  print("count-metrics: total_accesses,total_kbytes\n")
   for k,v in pairs(metrics) do
     print(string.format("metric:%s: %s", k, tonumber(v)))
   end
@@ -52,13 +52,13 @@ end
 -- parse arguments
 opts = getopt(arg, {"url"})
 if not opts["url"] then
-  print("UNKNOWN - miss argument = 'url'\r\n")
+  print("UNKNOWN - miss argument = 'url'\n")
   usage()
   return
 end
 
 ok, err = pcall(check, opts)
 if not ok then
-  print("UNKNOWN - plugin internal error\r\n")
+  print("UNKNOWN - plugin internal error\n")
   print(err)
 end

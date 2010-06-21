@@ -23,7 +23,7 @@ function check(opts)
     if addr then table.insert(addrs, addr) end
   end
   if #addrs == 0 then
-    print("CRITICAL - no address found\r\n")
+    print("CRITICAL - no address found\n")
     return
   end
   local is_ok = (opts["addrs"] == "")
@@ -36,9 +36,9 @@ function check(opts)
     end
   end
   if is_ok then
-    print(string.format("OK - returns = %s, response time = %.2f(ms)\r\n", string.join(addrs, "|"), escaped_time))
+    print(string.format("OK - returns = %s, response time = %.2f(ms)\n", string.join(addrs, "|"), escaped_time))
   else
-    print(string.format("CRITICAL - expected = '%s', got = '%s'\r\n", string.gsub(opts["addrs"],",", "|"), string.join(addrs, "|")))
+    print(string.format("CRITICAL - expected = '%s', got = '%s'\n", string.gsub(opts["addrs"],",", "|"), string.join(addrs, "|")))
   end
   print("metric:time: "..escaped_time)
 end
@@ -53,13 +53,13 @@ opts = getopt(arg, {"name", "addrs"})
 addrs = opts["addrs"] or ""
 opts["addrs"] = string.trim(addrs)
 if not opts["name"] then
-  print("UNKNOWN - miss argument = 'name'\r\n")
+  print("UNKNOWN - miss argument = 'name'\n")
   usage()
   return
 end
 
 ok, err = pcall(check, opts)
 if not ok then
-  print("UNKNOWN - plugin internal error\r\n")
+  print("UNKNOWN - plugin internal error\n")
   print(err)
 end

@@ -14,11 +14,11 @@ function check(opts)
   ok,err = client:connect(opts["host"], opts["port"])
   t2 = socket.gettime()
   if not ok then
-    print("CRITICAL - "..err.."\r\n")
+    print("CRITICAL - "..err.."\n")
     return
   end
   escaped_time = (t2 - t1) * 1000
-  print(string.format("OK - port = %s, response time = %.2fms\r\n", 
+  print(string.format("OK - port = %s, response time = %.2fms\n", 
     opts["port"], escaped_time))
   print(string.format("metric:time: %.3fms", escaped_time))
 end
@@ -31,18 +31,18 @@ end
 -- parse arguments
 opts = getopt(arg, {"host", "port"})
 if not opts["host"] then
-  print("UNKNOWN - miss argument = 'host'\r\n")
+  print("UNKNOWN - miss argument = 'host'\n")
   usage()
   return
 end
 if not opts["port"] then
-  print("UNKNOWN - miss argument = 'port'\r\n")
+  print("UNKNOWN - miss argument = 'port'\n")
   usage()
   return
 end
 
 ok, err = pcall(check, opts)
 if not ok then
-  print("UNKNOWN - plugin internal error\r\n")
+  print("UNKNOWN - plugin internal error\n")
   print(err)
 end

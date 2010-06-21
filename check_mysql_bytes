@@ -21,7 +21,7 @@ function check(opts)
   end
   -- print result
   print(string.format("OK - sent = %s, received = %s", metrics["sent"], metrics["received"]))
-  print("count-metrics: sent,received\r\n") 
+  print("count-metrics: sent,received\n") 
   for k,v in pairs(metrics) do
     print(string.format("metric:%s: %s", k, v))
   end
@@ -41,7 +41,7 @@ opts = getopt(arg, {"host", "password", "username", "port"})
 if not opts["port"] then opts["port"] = "3306" end
 for i, o in ipairs({"host", "password", "username"}) do
   if not opts[o] then
-    print(string.format("UNKNOWN - miss argument = '%s'\r\n", o))
+    print(string.format("UNKNOWN - miss argument = '%s'\n", o))
     usage()
     return
   end
@@ -49,7 +49,7 @@ end
 
 status, err = pcall(check, opts) 
 if not status then
-  print("UNKNOWN - plugin internal error\r\n")
+  print("UNKNOWN - plugin internal error\n")
   print(err)
 end
 

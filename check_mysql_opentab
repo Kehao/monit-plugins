@@ -38,7 +38,7 @@ function check(opts)
     metrics["open_table_cache_rate"] = tonumber(metrics["open_tables"])*100/tonumber(variables["table_open_cache"])
   end
   print(string.format("OK - table open cache = %s, open tables = %s", variables["table_open_cache"], metrics["open_tables"]))
-  print("count-metrics: opened_tables\r\n") 
+  print("count-metrics: opened_tables\n") 
   for k, v in pairs(variables) do
     print(string.format("entry:variable:%s: %s", k, v))
   end
@@ -61,7 +61,7 @@ opts = getopt(arg, {"host", "password", "username", "port"})
 if not opts["port"] then opts["port"] = "3306" end
 for i, o in ipairs({"host", "password", "username"}) do
   if not opts[o] then
-    print(string.format("UNKNOWN - miss argument = '%s'\r\n", o))
+    print(string.format("UNKNOWN - miss argument = '%s'\n", o))
     usage()
     return
   end
@@ -69,7 +69,7 @@ end
 
 status, err = pcall(check, opts) 
 if not status then
-  print("UNKNOWN - plugin internal error\r\n")
+  print("UNKNOWN - plugin internal error\n")
   print(err)
 end
 

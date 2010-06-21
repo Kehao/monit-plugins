@@ -11,22 +11,22 @@ function check(opts)
   http.TIMEOUT = 8
   local b,c,h,s = http.request(opts["url"])
   if not b then
-    print("CRITICAL - "..c.."\r\n")
+    print("CRITICAL - "..c.."\n")
     return
   end
   if c ~= 200 then
-    print("WARNING - "..s.."\r\n")
+    print("WARNING - "..s.."\n")
     return
   end
   connections = string.match(b, "^Active connections:%s+(%d+)")
   if not connections then
-    print("UNKNOWN - invalid content\r\n")
+    print("UNKNOWN - invalid content\n")
     return 
   end
   accepted,handled,requests = string.match(b, "(%d+)%s+(%d+)%s+(%d+)")
   reading,writing,waiting = string.match(b, "Reading:%s*(%d+)%s*Writing:%s*(%d+)%s*Waiting:%s*(%d+)")
   print("OK - Active connections = "..connections)
-  print("count-metrics: accepted,handled,requests\r\n")
+  print("count-metrics: accepted,handled,requests\n")
   print("metric:connections: "..connections)
   print("metric:accepted: "..accepted)
   print("metric:handled: "..handled)
@@ -44,13 +44,13 @@ end
 -- parse arguments
 opts = getopt(arg, {"url"})
 if (not opts["url"]) or (string.trim(opts["url"]) == "") then
-  print("UNKNOWN - miss argument = 'url'\r\n")
+  print("UNKNOWN - miss argument = 'url'\n")
   usage()
   return
 end
 
 ok, err = pcall(check, opts)
 if not ok then
-  print("UNKNOWN - plugin internal error\r\n")
+  print("UNKNOWN - plugin internal error\n")
   print(err)
 end

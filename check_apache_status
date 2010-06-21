@@ -22,15 +22,15 @@ function check(opts)
   http.TIMEOUT = 8
   local b,c,h,s = http.request(opts["url"])
   if not b then
-    print("CRITICAL - "..c.."\r\n")
+    print("CRITICAL - "..c.."\n")
     return
   end
   if c ~= 200 then
-    print("WARNING - "..s.."\r\n")
+    print("WARNING - "..s.."\n")
     return
   end
   if not string.find(b, "^Total Accesses:") then
-    print("WARNING - invalid body content\r\n")
+    print("WARNING - invalid body content\n")
     return
   end
   local metrics = {}
@@ -41,7 +41,7 @@ function check(opts)
       metrics[METRICTAB[kv[1]]] = kv[2]
     end
   end
-  print(string.format("OK - request per second = %s, bytes per second = %s\r\n", metrics["req_per_sec"], metrics["bytes_per_sec"]))
+  print(string.format("OK - request per second = %s, bytes per second = %s\n", metrics["req_per_sec"], metrics["bytes_per_sec"]))
   for k,v in pairs(metrics) do
     print(string.format("metric:%s: %s", k, tonumber(v)))
   end

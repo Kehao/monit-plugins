@@ -11,7 +11,7 @@ function check()
   local headers = {"total", "used", "free", "shared", "buffers", "cached"}
   local metrics = {string.match(output, "Mem:%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)")}
   if #metrics < 6 then 
-    print("UNKNOWN - no memory data\r\n") 
+    print("UNKNOWN - no memory data\n") 
     return  
   end
   local metrics = table.map(metrics, function(v) return tonumber(v) end)
@@ -19,7 +19,7 @@ function check()
   memtab["usage"] = string.format("%.2f%%", (memtab["used"] * 100 / memtab["total"]))
   memtab["appused"] = memtab["used"] - memtab["buffers"] - memtab["cached"]
   memtab["appusage"] = string.format("%.2f%%", (memtab["appused"] * 100/ memtab["total"]))
-  print(string.format("OK - memory usage = %s, app usage = %s\r\n", memtab["usage"], memtab["appusage"]))
+  print(string.format("OK - memory usage = %s, app usage = %s\n", memtab["usage"], memtab["appusage"]))
   for k,v in pairs(memtab) do
     print(string.format("metric:%s: %s", k, v))
   end
@@ -33,6 +33,6 @@ end
 -- parse arguments
 ok, err = pcall(check)
 if not ok then
-  print("UNKNOWN - plugin internal error\r\n")
+  print("UNKNOWN - plugin internal error\n")
   print(err)
 end

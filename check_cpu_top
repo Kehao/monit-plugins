@@ -10,12 +10,12 @@ function check()
   names = {"user","system","nice","idle","iowait"} 
   values = {string.match(output, "%s+([0-9]+.[0-9]+)%%us,%s+([0-9]+.[0-9]+)%%sy,%s+([0-9]+.[0-9]+)%%ni,%s+([0-9]+.[0-9]+)%%id,%s+([0-9]+.[0-9]+)%%wa")}
   if #values ~= 5 then
-    print "UNKNOWN - unknown command output\r\n"
+    print "UNKNOWN - unknown command output\n"
     return
   end
   metrics = table.zip(names, values)
   usage = 100 - tonumber(metrics["idle"])
-  print(string.format("OK - usage = %.2f%%\r\n", usage))
+  print(string.format("OK - usage = %.2f%%\n", usage))
   print("metric:usage: "..usage.."%")
   for k,v in pairs(metrics) do
     print(string.format("metric:%s: %s%%", k, v))
@@ -28,6 +28,6 @@ end
 
 ok, err = pcall(check)
 if not ok then
-  print("UNKNOWN - plugin internal error\r\n")
+  print("UNKNOWN - plugin internal error\n")
   print(err)
 end

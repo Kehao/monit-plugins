@@ -11,13 +11,13 @@ function check()
   local headers = {"total", "used", "free"}
   local metrics = {string.match(output, "Swap:%s+(%d+)%s+(%d+)%s+(%d+)")}
   if #metrics < 3 then 
-    print("UNKNOWN - no swap data\r\n") 
+    print("UNKNOWN - no swap data\n") 
     return  
   end
   local metrics = table.map(metrics, function(v) return tonumber(v) end)
   local swaptab = table.zip(headers, metrics)
   swaptab["usage"] = string.format("%.2f%%", (swaptab["used"] * 100 / swaptab["total"]))
-  print(string.format("OK - swap usage = %s\r\n", swaptab["usage"]))
+  print(string.format("OK - swap usage = %s\n", swaptab["usage"]))
   for k,v in pairs(swaptab) do
     print(string.format("metric:%s: %s", k, v))
   end
@@ -31,6 +31,6 @@ end
 -- parse arguments
 ok, err = pcall(check)
 if not ok then
-  print("UNKNOWN - plugin internal error\r\n")
+  print("UNKNOWN - plugin internal error\n")
   print(err)
 end

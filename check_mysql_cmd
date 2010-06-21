@@ -22,7 +22,7 @@ function check(opts)
   metrics["transactions"] = tonumber(metrics["commit"]) + tonumber(metrics["rollback"])
   -- print result
   print(string.format("OK - questions = %s, transactions = %s", metrics['questions'], metrics['transactions']))
-  print("count-metrics: questions,transactions,select,update,insert,delete,commit,rollback\r\n") 
+  print("count-metrics: questions,transactions,select,update,insert,delete,commit,rollback\n") 
   for k,v in pairs(metrics) do
     print(string.format("metric:%s: %s", k, v))
   end
@@ -42,7 +42,7 @@ opts = getopt(arg, {"host", "password", "username", "port"})
 if not opts["port"] then opts["port"] = "3306" end
 for i, o in ipairs({"host", "password", "username"}) do
   if not opts[o] then
-    print(string.format("UNKNOWN - miss argument = '%s'\r\n", o))
+    print(string.format("UNKNOWN - miss argument = '%s'\n", o))
     usage()
     return
   end
@@ -50,7 +50,7 @@ end
 
 status, err = pcall(check, opts) 
 if not status then
-  print("UNKNOWN - plugin internal error\r\n")
+  print("UNKNOWN - plugin internal error\n")
   print(err)
 end
 

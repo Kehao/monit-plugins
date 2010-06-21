@@ -29,9 +29,9 @@ def run(args):
     matches = int(output.strip('\n'))
     if matches > 0:
       summary = "found = " + "'" + threshold[1] + "', " + "times = " +  str(matches)
-      print threshold[0], '-', summary + "\r\n"
+      print threshold[0], '-', summary + "\n"
       return
-  print 'OK - file size =', data['size'] + '(bytes)\r\n'
+  print 'OK - file size =', data['size'] + '(bytes)\n'
 
   for name, val in data.iteritems():
     print "metric:",name,": ",val
