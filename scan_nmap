@@ -29,7 +29,7 @@ function scan(opts)
 
   print("OK - tcp ports = "..string.join(tcp_ports, "|")..", udp ports = "..string.join(udp_ports, "|").."\r\n")
   for _,entry in pairs(entries) do
-    print(string.format("entry:%s:%s port=%s,state=%s,service=%s", 
+    print(string.format("entry:%s:%s: port=%s,state=%s,service=%s", 
         entry.proto, entry.port, entry.port, entry.state, entry.service))
   end
 end
