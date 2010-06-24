@@ -31,7 +31,7 @@ function check(opts)
   end
   metrics["thread_cache_hits"] = (1 - tonumber(metrics["created"])/tonumber(metrics["connections"])) * 100
   -- print result
-  summary = string.format("thread_cache_hits = %.2f%%, thread_cache_size = %s, max_connections = %s, running = %s", metrics["thread_cache_hits"], variables["thread_cache_size"], variables["max_connections"], metrics["running"])
+  summary = string.format("thread_cache_hits = %.2f%%, thread_cache_size = %s, max_connections = %s, created = %, running = %s", metrics["thread_cache_hits"], variables["thread_cache_size"], variables["max_connections"], metrics["created"], metrics["running"])
   print("OK - "..summary)
   print("count-metrics: connections,created\n") 
   for k, v in pairs(variables) do
