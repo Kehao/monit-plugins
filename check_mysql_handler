@@ -28,7 +28,7 @@ function check(opts)
     end
   end
   print("count-metrics: "..string.join(counters, ",").."\n") 
-  print("metric: handler_scan_rate="..scan_rate)
+  print("metric:handler_scan_rate: "..scan_rate)
   for k,v in pairs(metrics) do
     if k ~= "com_select" then
       print(string.format("metric:%s: %s", k, v))
