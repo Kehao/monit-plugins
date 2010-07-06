@@ -37,7 +37,7 @@ function check(opts)
       metrics[METRICTAB[kv[1]]] = kv[2]
     end
   end
-  print(string.format("OK - total accesses = %s, total kbytes = %s", metrics["total_accesses"], metrics["total_kbytes"]))
+  print(string.format("OK - total_accesses = %s, total_kbytes = %s", metrics["total_accesses"], metrics["total_kbytes"]))
   print("count-metrics: total_accesses,total_kbytes\n")
   for k,v in pairs(metrics) do
     print(string.format("metric:%s: %s", k, tonumber(v)))
