@@ -18,7 +18,7 @@ function check(opts)
   http.TIMEOUT = 8
   local b,c,h,s = http.request(opts["url"])
   if not b then
-    print("CRITICAL - "..status.."\n")
+    print("CRITICAL - "..c.."\n")
     return
   end
   if c ~= 200 then
