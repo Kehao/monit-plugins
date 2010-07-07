@@ -14,7 +14,7 @@ function check()
     print("UNKNOWN - no memory data\n") 
     return  
   end
-  local metrics = table.map(metrics, function(v) return tonumber(v) end)
+  local metrics = table.map(metrics, function(v) return (tonumber(v) * 1024) end)
   local memtab = table.zip(headers, metrics)
   memtab["usage"] = string.format("%.2f%%", (memtab["used"] * 100 / memtab["total"]))
   memtab["appused"] = memtab["used"] - memtab["buffers"] - memtab["cached"]
