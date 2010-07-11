@@ -1,0 +1,67 @@
+#!/usr/bin/env lua
+
+-- check_ftp
+
+require("plugin")
+
+-- do check
+function check_ftp(opts) 
+    local socket = require("socket")
+    local ftp = require("socket.ftp")
+    local ltn12 = require("ltn12")
+    local t = {}
+    t1 = socket.gettime()
+    p = {
+        host = opts["host"],
+        port = opts["port"],
+        user = opts["user"],
+        password = opts["passwd"],
+        command = "QUIT"
+    }
+    p.sink = ltn12.sink.table(t)
+    local r, e = ftp.get(p)
+    t2 = socket.gettime()
+    if e ~= "closed" then
+        print("CRITICAL - "..e.."\r\n")
+        return
+    end
+    escaped_time = (t2 - t1) * 1000
+    print(string.format("OK - ftp connected (port = %s), response time = %.2fms\r\n", 
+    opts["port"], escaped_time))
+    print(string.format("metric: time=%.3fms", escaped_time))
+end
+
+-- usage
+function usage() 
+  print("Usage: check_udp --host=host --port=port --user=user --passwd=passwd")
+end
+
+-- parse arguments
+opts = getopt(arg, {"host", "port", "user", "passwd"})
+if not opts["host"] then
+    print("UNKNOWN - miss argument = 'host'\r\n")
+    usage()
+    return
+end
+if not opts["port"] then
+    print("UNKNOWN - miss argument = 'port'\r\n")
+    usage()
+    return
+end
+if not opts["user"] then
+    print("UNKNOWN - miss argument = 'user'\r\n")
+    usage()
+    return
+end
+if not opts["passwd"] then
+    print("UNKNOWN - miss argument = 'password'\r\n")
+    usage()
+    return
+end
+
+-- start_check
+ok, err = pcall(check_ftp, opts)
+if not ok then
+  print("UNKNOWN - plugin internal error\r\n")
+  print(err)
+end
