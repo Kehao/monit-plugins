@@ -1,0 +1,55 @@
+#!/usr/bin/env lua
+
+-- check_smtp
+
+require("plugin")
+
+-- do check
+function check_smtp(opts) 
+    local socket = require("socket")
+    t1 = socket.gettime()
+    local con, errMsg = socket.connect(opts["host"], opts["port"])
+    if not con then
+        print("CRITICAL - ".."connection refused".."\r\n")
+        return
+    end   
+    _, _ = con:receive()
+    command= "NOOP" .. "\r\n"
+    con:send(command)   
+    local resp, errMsg=con:receive()
+    t2 = socket.gettime()
+    if not string.find(resp,"250[^\n]+[Oo][Kk]") then
+        print("CRITICAL - "..resp.."\r\n")
+        return
+    end
+    con:close()
+    escaped_time = (t2 - t1) * 1000
+    print(string.format("OK - smtp port = %s, response time = %.2fms\r\n", 
+    opts["port"], escaped_time))
+    print(string.format("metric:time: %.3fms", escaped_time))
+end
+
+-- usage
+function usage() 
+    print("Usage: check_smtp --host=host --port=port")
+end
+
+-- parse arguments
+opts = getopt(arg, {"host", "port"})
+if not opts["host"] then
+    print("UNKNOWN - miss argument = 'host'\r\n")
+    usage()
+    return
+end
+if not opts["port"] then
+    print("UNKNOWN - miss argument = 'port'\r\n")
+    usage()
+    return
+end
+
+-- start_check
+ok, err = pcall(check_smtp, opts)
+if not ok then
+    print("UNKNOWN - plugin internal error\r\n")
+    print(err)
+end
