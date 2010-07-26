@@ -1,0 +1,122 @@
+#!/usr/bin/env lua
+
+-- check squid status
+
+require("plugin")
+
+local METRICTAB = {
+    "total_accesses", 
+    "http_req_num",
+    "icp_mes_resv",
+    "icp_mes_sent",
+    "queued_icp_rep",
+    "req_fail_ratio",
+    "http_req_minu", 
+    "icp_mes_minu",
+    "req_hit_ratio",
+    "byte_hit_ratio",
+    "req_mem_hit_ratio",
+    "req_dis_hit_ratio"}
+
+-- fetch the string of os.cmd return 
+function fetch_str(line)
+    local i = 1
+    local j = 1
+    local tmp = {}
+    while(statusone ~= true) do
+        if string.find(line[i], "Number of clients accessing cache:") then
+            repeat 
+                tmp[j] = line[i]
+                i = i + 1
+                j = j + 1
+            until
+                string.find(line[i], "Select loop called:")
+            statusone = true         
+        else 
+            statusone = false
+            i = i + 1
+        end        
+    end
+    while(statustwo ~= true) do
+        if string.find(line[i], "5min") then
+            repeat 
+                tmp[j] = line[i]
+                i = i + 1
+                j = j + 1
+            until
+                string.find(line[i], "Storage Swap size:")
+            statustwo = true         
+        else 
+            statustwo = false
+            i = i + 1
+        end     
+    end          
+    return tmp
+end        
+    
+-- do check
+function check(opts) 
+    local command = "squidclient" .. " -h " .. opts["host"] .. " -p " .. opts["port"] .. " mgr:info"
+    output = os.cmd(command)
+
+    if not string.find(output, ("HTTP/1.0 200 OK")) then
+        if string.find(output, "Access Denied.") then
+            print("WARNING - Access Denied! Please check squid.conf.\n")
+            return
+        elseif string.find(output, "HTTP/1.0 404 Not Found") then
+            print("CRITICAL - HTTP/1.0 404 Not Found\n")
+            return
+        else
+            print("CRITICAL - " .. output)
+            return
+        end
+    end
+   
+    local metrics = {}
+    local tmp_i = 1
+    lines = string.split(output, "[\r\n]+")
+    temp = fetch_str(lines)
+    for _,line in pairs(temp) do 
+        if tmp_i < 9 then
+            kv = string.split(line, ":%s*")
+            if not string.find(kv[1],"HTCP") then
+                metrics[METRICTAB[tmp_i]] = kv[2]
+                tmp_i = tmp_i + 1
+            end
+        else
+            kv = string.split(line, ",%s*")
+            kvtwo = string.split(kv[1], "5min:%s*")
+            metrics[METRICTAB[tmp_i]] = kvtwo[2]
+            tmp_i = tmp_i + 1
+        end
+    end
+    print(string.format("OK - http request per minute = %s, request hit ratios = %s\n", metrics["http_req_minu"] ,metrics["req_hit_ratio"]))
+    for k,v in pairs(metrics) do
+        print(string.format("metric:%s: %s", k, v))
+    end
+end
+
+-- usage
+function usage() 
+  print("Usage: check_squid_status --host=host --port=port")
+end
+
+-- parse arguments
+opts = getopt(arg,  {"host", "port"})
+if not opts["host"] then
+    print("UNKNOWN - miss argument = 'host'\r\n")
+    usage()
+    return
+end
+if not opts["port"] then
+    print("UNKNOWN - miss argument = 'port'\r\n")
+    usage()
+    return
+end
+
+-- start_check
+ok, err = pcall(check, opts)
+if not ok then
+    print("UNKNOWN - plugin internal error\r\n")
+    print(err)
+end
