@@ -6,7 +6,7 @@ require("plugin")
 
 local METRICTAB = {
     "total_accesses", 
-    "http_req_num",
+--  "http_req_num",
     "icp_mes_resv",
     "icp_mes_sent",
     "queued_icp_rep",
